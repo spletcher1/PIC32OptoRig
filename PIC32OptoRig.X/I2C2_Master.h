@@ -6,9 +6,10 @@ I2C_RESULT Read8FromI2C2(unsigned char slaveaddress, unsigned char dataaddress, 
 I2C_RESULT Read16FromI2C2(unsigned char slaveaddress, unsigned char dataaddress, unsigned int *data);
 I2C_RESULT Read32FromI2C2Backward(unsigned char slaveaddress, unsigned char dataaddress, unsigned int *data);
 I2C_RESULT Write8ToI2C2(unsigned char slaveaddress, unsigned char dataaddress, unsigned char data);
-
-I2C_RESULT RequestMeasureSi7021I2C2(unsigned char slaveaddress, unsigned char dataaddress);
-I2C_RESULT ReadHumidityFromSi7021I2C2(unsigned char slaveaddress, unsigned int *data);
+I2C_RESULT WriteByte_24LC256(unsigned int address, unsigned char wData);
+I2C_RESULT ReadByte_24LC256(unsigned int address, unsigned char *data);
+I2C_RESULT WriteTimeToRTC(rtc_time_t *sTime);
+I2C_RESULT ReadTimeFromRTC(rtc_time_t *ts);
 void FreeI2C(void);
 
 #endif

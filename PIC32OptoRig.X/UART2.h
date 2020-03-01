@@ -30,7 +30,7 @@ typedef union {
         unsigned UARTRegisterOverflowError : 1;
         unsigned CommandNotFoundError : 1;
         unsigned TooManyStepsError : 1;
-        unsigned I2CTimeoutError : 1;
+        unsigned I2CError : 1;
         unsigned RTCTimeFormatError : 1;
         unsigned DeveloperBit2 : 1;
     } bits;

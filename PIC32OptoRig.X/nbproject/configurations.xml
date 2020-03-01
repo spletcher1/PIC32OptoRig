@@ -18,6 +18,10 @@
       <itemPath>BoardFunctions.h</itemPath>
       <itemPath>Buttons.h</itemPath>
       <itemPath>UART2.h</itemPath>
+      <itemPath>DS3231.h</itemPath>
+      <itemPath>timelib.h</itemPath>
+      <itemPath>I2C2_Master.h</itemPath>
+      <itemPath>Program.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -33,6 +37,9 @@
       <itemPath>BoardFunctions.c</itemPath>
       <itemPath>Buttons.c</itemPath>
       <itemPath>UART2.c</itemPath>
+      <itemPath>DS3231.c</itemPath>
+      <itemPath>I2C2_Master.c</itemPath>
+      <itemPath>Program.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

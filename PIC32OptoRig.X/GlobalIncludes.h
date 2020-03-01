@@ -5,16 +5,21 @@
 #include <xc.h>
 #include <peripheral/int.h>
 #include <plib.h>
+#include <stddef.h>
 #include "uart.h"
 #include "timer.h"
 #include "system.h"
-#include "adc10.h"
+//#include "adc10.h"
 #include "HardwareProfile.h"
 #include "SystemFunctions.h"
 #include "UART2.h"
 #include "UpdateTimer.h"
+#include "timelib.h"
+#include "DS3231.h"
 #include "I2C2_Master.h"
-#include "OptoFunctions.h"
+//#include "OptoFunctions.h"
+//#include "EEPROM.h"
+#include "Program.h"
 #include "Buttons.h"
 #include <stdio.h>
 
