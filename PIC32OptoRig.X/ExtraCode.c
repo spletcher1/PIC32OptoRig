@@ -283,3 +283,191 @@ void __ISR(_I2C_2_VECTOR, IPL4AUTO) I2C2InterruptServiceRoutine(void) {
 
 
 */
+
+/*
+I2C_RESULT Read16FromI2C5(unsigned char slaveaddress, unsigned char dataaddress, unsigned int *data) {
+    // Now begin the send sequence
+    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
+    IdleI2C5();
+    StartI2C5(); // Send the start bit.
+    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
+    IdleI2C5(); // Wait until this is complete.
+
+    // Send the slave address and memory start address	
+    MasterWriteI2C5(slaveaddress);
+    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
+    IdleI2C5();
+    if (I2C5STATbits.ACKSTAT) return I2C_ERROR; // Make sure it is acked.	
+
+    MasterWriteI2C5(dataaddress);
+    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
+    IdleI2C5();
+    if (I2C5STATbits.ACKSTAT) return I2C_ERROR;
+
+
+    RestartI2C5(); // Send restart.
+    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
+    IdleI2C5();
+
+    MasterWriteI2C5(slaveaddress | 0x01); // Send slave address but last bit changed to 1 to indicate a read.
+    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
+    IdleI2C5();
+    if (I2C5STATbits.ACKSTAT) return I2C_ERROR;
+
+    *data = MasterReadI2C5();
+    AckI2C5();
+    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
+    IdleI2C5();
+
+
+    *data = (*data << 8) + MasterReadI2C5();
+    NotAckI2C5();
+    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
+    IdleI2C5();
+
+
+    StopI2C5();
+    return I2C_SUCCESS;
+}
+
+I2C_RESULT Read32FromI2C5(unsigned char slaveaddress, unsigned char dataaddress, unsigned int *data) {
+    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
+    IdleI2C5();
+    // Now begin the send sequence
+    StartI2C5(); // Send the start bit.
+    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
+    IdleI2C5(); // Wait until this is complete.
+
+    // Send the slave address and memory start address	
+    MasterWriteI2C5(slaveaddress);
+    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
+    IdleI2C5();
+    if (I2C5STATbits.ACKSTAT) return I2C_ERROR;
+
+    MasterWriteI2C5(dataaddress);
+    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
+    IdleI2C5();
+    if (I2C5STATbits.ACKSTAT) return I2C_ERROR;
+
+    RestartI2C5(); // Send restart.
+    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
+    IdleI2C5();
+
+    MasterWriteI2C5(slaveaddress | 0x01); // Send slave address but last bit changed to 1 to indicate a read.
+    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
+    IdleI2C5();
+
+    *data = MasterReadI2C5();
+    AckI2C5();
+    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
+    IdleI2C5();
+
+    *data = (*data << 8) + MasterReadI2C5();
+    AckI2C5();
+    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
+    IdleI2C5();
+
+    *data = (*data << 8) + MasterReadI2C5();
+    AckI2C5();
+    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
+    IdleI2C5();
+
+    *data = (*data << 8) + MasterReadI2C5();
+    NotAckI2C5();
+    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
+    IdleI2C5();
+
+    StopI2C5();
+    return I2C_SUCCESS;
+}
+
+I2C_RESULT Read32FromI2C5Backward(unsigned char slaveaddress, unsigned char dataaddress, unsigned int *data) {
+    unsigned char a, b, c, d;
+    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
+    IdleI2C5();
+    // Now begin the send sequence
+    StartI2C5(); // Send the start bit.
+    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
+    IdleI2C5(); // Wait until this is complete.
+
+    // Send the slave address and memory start address	
+    MasterWriteI2C5(slaveaddress);
+    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
+    IdleI2C5();
+    if (I2C5STATbits.ACKSTAT) return I2C_ERROR; // If this bit is 1, then slave failed to ackknowledge, so break.	
+
+    MasterWriteI2C5(dataaddress);
+    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
+    IdleI2C5();
+    if (I2C5STATbits.ACKSTAT) return I2C_ERROR; // If this bit is 1, then slave failed to ackknowledge, so break.	
+
+    //StopI2C5(); // Send the stop condition.
+    //IdleI2C5(); // Wait until done.
+
+    RestartI2C5(); // Send restart.
+    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
+    IdleI2C5();
+
+    MasterWriteI2C5(slaveaddress | 0x01); // Send slave address but last bit changed to 1 to indicate a read.
+    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
+    IdleI2C5();
+
+    *data = 0;
+    // Note that the masterread function waits until the receive bit is cleared.  Since all other relevant bits are 
+    // also expected to be clear, there is no reason to check Idel before sending and acknowledgement.
+    a = MasterReadI2C5();
+    AckI2C5();
+    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
+    IdleI2C5();
+
+    b = MasterReadI2C5();
+    AckI2C5();
+    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
+    IdleI2C5();
+
+    c = MasterReadI2C5();
+    AckI2C5();
+    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
+    IdleI2C5();
+
+    d = MasterReadI2C5();
+    NotAckI2C5();
+    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
+    IdleI2C5();
+
+    StopI2C5();
+    *(data) = (d << 24) + (c << 16) + (b << 8) + a;
+    return I2C_SUCCESS;
+}
+
+
+// This function is simplified for single byte addresses
+
+I2C_RESULT Write8ToI2C5(unsigned char slaveaddress, unsigned char dataaddress, unsigned char data) {
+    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
+    IdleI2C5();
+    // Begin the send sequence
+    StartI2C5(); // Send the start bit.
+    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
+    IdleI2C5(); // Wait until this is complete.
+
+    MasterWriteI2C5(slaveaddress);
+    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
+    IdleI2C5();
+    if (I2C5STATbits.ACKSTAT) return I2C_ERROR; // If this bit is 1, then slave failed to ackknowledge, so break.	
+
+    MasterWriteI2C5(dataaddress);
+    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
+    IdleI2C5();
+    if (I2C5STATbits.ACKSTAT) return I2C_ERROR; // If this bit is 1, then slave failed to ackknowledge, so break.	
+
+    MasterWriteI2C5(data);
+    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
+    IdleI2C5();
+    if (I2C5STATbits.ACKSTAT) return I2C_ERROR; // If this bit is 1, then slave failed to ackknowledge, so break.	
+
+    I2CStop(I2C5); // Send the stop condition.		
+    return I2C_SUCCESS;
+
+}
+*/

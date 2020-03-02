@@ -17,11 +17,11 @@
       <itemPath>HardwareProfile.h</itemPath>
       <itemPath>BoardFunctions.h</itemPath>
       <itemPath>Buttons.h</itemPath>
-      <itemPath>UART2.h</itemPath>
       <itemPath>DS3231.h</itemPath>
       <itemPath>timelib.h</itemPath>
-      <itemPath>I2C2_Master.h</itemPath>
       <itemPath>Program.h</itemPath>
+      <itemPath>I2C5_Master.h</itemPath>
+      <itemPath>UART1.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -36,10 +36,10 @@
       <itemPath>ExtraCode.c</itemPath>
       <itemPath>BoardFunctions.c</itemPath>
       <itemPath>Buttons.c</itemPath>
-      <itemPath>UART2.c</itemPath>
       <itemPath>DS3231.c</itemPath>
-      <itemPath>I2C2_Master.c</itemPath>
       <itemPath>Program.c</itemPath>
+      <itemPath>I2C5_Master.c</itemPath>
+      <itemPath>UART1.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -57,7 +57,7 @@
     <conf name="V3Board" type="2">
       <toolsSet>
         <developmentServer>localhost</developmentServer>
-        <targetDevice>PIC32MX795F512L</targetDevice>
+        <targetDevice>PIC32MX795F512H</targetDevice>
         <targetHeader></targetHeader>
         <targetPluginBoard></targetPluginBoard>
         <platformTool>RealICEPlatformTool</platformTool>
@@ -321,7 +321,6 @@
         <property key="ETHERNET CONTROLLER" value="true"/>
         <property key="Freeze All Other Peripherals" value="true"/>
         <property key="I2C1" value="true"/>
-        <property key="I2C2" value="true"/>
         <property key="I2C3" value="true"/>
         <property key="I2C4" value="true"/>
         <property key="I2C5" value="true"/>
@@ -346,7 +345,6 @@
         <property key="RIExTrigs.Three" value="OFF"/>
         <property key="RIExTrigs.Two" value="OFF"/>
         <property key="RIExTrigs.Zero" value="OFF"/>
-        <property key="SPI 1" value="true"/>
         <property key="SPI 2" value="true"/>
         <property key="SPI 3" value="true"/>
         <property key="SPI 4" value="true"/>

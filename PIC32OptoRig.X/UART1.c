@@ -29,21 +29,21 @@ extern errorFlags_t ErrorsRegister;
 
 /////////////////////////////////////////////////////////////////
 void inline DisableUARTInterrupts(){
-    INTEnable(INT_U2RX,INT_DISABLED);
-	INTEnable(INT_U2E,INT_DISABLED);    
+    INTEnable(INT_U1RX,INT_DISABLED);
+	INTEnable(INT_U1E,INT_DISABLED);    
 }
 
 void inline EnableUARTInterrupts(){
-    INTEnable(INT_U2RX,INT_ENABLED);
-	INTEnable(INT_U2E,INT_ENABLED);  
-    INTClearFlag(INT_U2RX);
-    INTClearFlag(INT_U2TX); 
+    INTEnable(INT_U1RX,INT_ENABLED);
+	INTEnable(INT_U1E,INT_ENABLED);  
+    INTClearFlag(INT_U1RX);
+    INTClearFlag(INT_U1TX); 
 }
 
 
 void inline SendByte(unsigned char c){  
-    while (!UARTTransmitterIsReady(UART2));
-        UARTSendDataByte(UART2, c);    
+    while (!UARTTransmitterIsReady(UART1));
+        UARTSendDataByte(UART1, c);    
 }
 
 void SendByteArray(unsigned char* array, const int len){
@@ -74,49 +74,49 @@ void SendAcknowledgement(){
 void SendShortInt(int a){
   unsigned char c;  
   c = a>>8;
-  while (!UARTTransmitterIsReady(UART2));
-       UARTSendDataByte(UART2, c);
+  while (!UARTTransmitterIsReady(UART1));
+       UARTSendDataByte(UART1, c);
   c = a;
-  while (!UARTTransmitterIsReady(UART2));
-       UARTSendDataByte(UART2, c); 
+  while (!UARTTransmitterIsReady(UART1));
+       UARTSendDataByte(UART1, c); 
 }
 
 void SendInt(int a){
   unsigned char c; 
   c = a>>24;
-  while (!UARTTransmitterIsReady(UART2));
-       UARTSendDataByte(UART2, c);
+  while (!UARTTransmitterIsReady(UART1));
+       UARTSendDataByte(UART1, c);
   c = a>>16;
-  while (!UARTTransmitterIsReady(UART2));
-       UARTSendDataByte(UART2, c);
+  while (!UARTTransmitterIsReady(UART1));
+       UARTSendDataByte(UART1, c);
   c = a>>8;
-  while (!UARTTransmitterIsReady(UART2));
-       UARTSendDataByte(UART2, c);
+  while (!UARTTransmitterIsReady(UART1));
+       UARTSendDataByte(UART1, c);
   c = a;
-  while (!UARTTransmitterIsReady(UART2));
-       UARTSendDataByte(UART2, c);  
+  while (!UARTTransmitterIsReady(UART1));
+       UARTSendDataByte(UART1, c);  
 }
 
-void ConfigureUART2Interrupts(){
+void ConfigureUART1Interrupts(){
 	// For now we interrupt on RX
-	INTSetVectorPriority(INT_UART_2_VECTOR,INT_PRIORITY_LEVEL_4);
-	INTClearFlag(INT_U2RX);
-    INTClearFlag(INT_U2TX);    
-	INTEnable(INT_U2RX,INT_ENABLED);
-	INTEnable(INT_U2E,INT_ENABLED);
+	INTSetVectorPriority(INT_UART_1_VECTOR,INT_PRIORITY_LEVEL_4);
+	INTClearFlag(INT_U1RX);
+    INTClearFlag(INT_U1TX);    
+	INTEnable(INT_U1RX,INT_ENABLED);
+	INTEnable(INT_U1E,INT_ENABLED);
 }
 
-void ConfigureUART2(void) {
+void ConfigureUART1(void) {
     // Note: As of now, the baud rate set for the parallax RFID reader is 2400.
     // Data bits = 8; no parity; stop bits = 1;
 
-    UARTConfigure(UART2, UART_ENABLE_HIGH_SPEED);
-    UARTSetFifoMode(UART2, UART_INTERRUPT_ON_RX_NOT_EMPTY);
-    UARTSetLineControl(UART2, UART_DATA_SIZE_8_BITS | UART_PARITY_NONE | UART_STOP_BITS_1);
-    UARTSetDataRate(UART2, GetPeripheralClock(), TARGET_BAUD_RATE);
-    UARTEnable(UART2,UART_ENABLE_FLAGS(UART_ENABLE | UART_TX | UART_RX | UART_PERIPHERAL));
+    UARTConfigure(UART1, UART_ENABLE_HIGH_SPEED);
+    UARTSetFifoMode(UART1, UART_INTERRUPT_ON_RX_NOT_EMPTY);
+    UARTSetLineControl(UART1, UART_DATA_SIZE_8_BITS | UART_PARITY_NONE | UART_STOP_BITS_1);
+    UARTSetDataRate(UART1, GetPeripheralClock(), TARGET_BAUD_RATE);
+    UARTEnable(UART1,UART_ENABLE_FLAGS(UART_ENABLE | UART_TX | UART_RX | UART_PERIPHERAL));
 
-    ConfigureUART2Interrupts();
+    ConfigureUART1Interrupts();
     packetSize = 0;       
 }
 
@@ -127,42 +127,42 @@ void ConfigureUART2(void) {
 // Additional timings revealed that it takes about 570us to receive the status request
 // and then complete sending the response package. This seems well within the needed
 // interval. This timing could easily handle even 100 DFM.
-void __ISR(_UART2_VECTOR, IPL4AUTO) UART2Interrupt(void){
+void __ISR(_UART1_VECTOR, IPL4AUTO) UART1Interrupt(void){
 	int error;
 	unsigned char data,tmp;
-	error = UART2GetErrors();	
+	error = UART1GetErrors();	
 	if (error > 0) {
 		if (error & 0x01) { //Overflow Error
 			U2STAbits.OERR = 0;
-			INTClearFlag(INT_U2E);
-			while(DataRdyUART2())            
-                data = UARTGetDataByte(UART2);
+			INTClearFlag(INT_U1E);
+			while(DataRdyUART1())            
+                data = UARTGetDataByte(UART1);
             packetSize=0;
-            INTClearFlag(INT_U2RX);	           
+            INTClearFlag(INT_U1RX);	           
             ErrorsRegister.bits.UARTRegisterOverflowError=1;
             return;
 		}
 		else if(error & 0x02) {
 			U2STAbits.FERR=0;
-			while(DataRdyUART2())            
-                data = UARTGetDataByte(UART2);			
+			while(DataRdyUART1())            
+                data = UARTGetDataByte(UART1);			
             packetSize=0;
-			INTClearFlag(INT_U2E);
+			INTClearFlag(INT_U1E);
             ErrorsRegister.bits.UARTFrameError=1;
-            INTClearFlag(INT_U2RX);	
+            INTClearFlag(INT_U1RX);	
             return;
 		}	
         else {
             ErrorsRegister.bits.DeveloperBit2=1;
-            while(DataRdyUART2())            
-                data = UARTGetDataByte(UART2);            
-            UART2ClearAllErrors();            
-            INTClearFlag(INT_U2E);
-            INTClearFlag(INT_U2RX);	
+            while(DataRdyUART1())            
+                data = UARTGetDataByte(UART1);            
+            UART1ClearAllErrors();            
+            INTClearFlag(INT_U1E);
+            INTClearFlag(INT_U1RX);	
         }
 	}	
-    while(DataRdyUART2()) {
-		data=UARTGetDataByte(UART2);  
+    while(DataRdyUART1()) {
+		data=UARTGetDataByte(UART1);  
         if(data == endChar)
             packetReceived=1;
         else{
@@ -174,7 +174,7 @@ void __ISR(_UART2_VECTOR, IPL4AUTO) UART2Interrupt(void){
         }       
     }
     
-    INTClearFlag(INT_U2RX);		
+    INTClearFlag(INT_U1RX);		
 }
 
 void ProcessCommandBuffer() {

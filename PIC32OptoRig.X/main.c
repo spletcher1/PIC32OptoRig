@@ -21,7 +21,7 @@ void InitApp(void){
   Startup();  
   InitializeBoard();
   ConfigureUpdateTimer();
-  ConfigureUART2();
+  ConfigureUART1();
   ConfigureButtons();
   //Initialize_24LC256();// 500ms delay
   //InitRTC();

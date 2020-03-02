@@ -57,17 +57,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=SystemFunctions.c UpdateTimer.c main.c BoardFunctions.c Buttons.c UART2.c DS3231.c I2C2_Master.c Program.c
+SOURCEFILES_QUOTED_IF_SPACED=SystemFunctions.c UpdateTimer.c main.c BoardFunctions.c Buttons.c DS3231.c Program.c I2C5_Master.c UART1.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/SystemFunctions.o ${OBJECTDIR}/UpdateTimer.o ${OBJECTDIR}/main.o ${OBJECTDIR}/BoardFunctions.o ${OBJECTDIR}/Buttons.o ${OBJECTDIR}/UART2.o ${OBJECTDIR}/DS3231.o ${OBJECTDIR}/I2C2_Master.o ${OBJECTDIR}/Program.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/SystemFunctions.o.d ${OBJECTDIR}/UpdateTimer.o.d ${OBJECTDIR}/main.o.d ${OBJECTDIR}/BoardFunctions.o.d ${OBJECTDIR}/Buttons.o.d ${OBJECTDIR}/UART2.o.d ${OBJECTDIR}/DS3231.o.d ${OBJECTDIR}/I2C2_Master.o.d ${OBJECTDIR}/Program.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/SystemFunctions.o ${OBJECTDIR}/UpdateTimer.o ${OBJECTDIR}/main.o ${OBJECTDIR}/BoardFunctions.o ${OBJECTDIR}/Buttons.o ${OBJECTDIR}/DS3231.o ${OBJECTDIR}/Program.o ${OBJECTDIR}/I2C5_Master.o ${OBJECTDIR}/UART1.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/SystemFunctions.o.d ${OBJECTDIR}/UpdateTimer.o.d ${OBJECTDIR}/main.o.d ${OBJECTDIR}/BoardFunctions.o.d ${OBJECTDIR}/Buttons.o.d ${OBJECTDIR}/DS3231.o.d ${OBJECTDIR}/Program.o.d ${OBJECTDIR}/I2C5_Master.o.d ${OBJECTDIR}/UART1.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/SystemFunctions.o ${OBJECTDIR}/UpdateTimer.o ${OBJECTDIR}/main.o ${OBJECTDIR}/BoardFunctions.o ${OBJECTDIR}/Buttons.o ${OBJECTDIR}/UART2.o ${OBJECTDIR}/DS3231.o ${OBJECTDIR}/I2C2_Master.o ${OBJECTDIR}/Program.o
+OBJECTFILES=${OBJECTDIR}/SystemFunctions.o ${OBJECTDIR}/UpdateTimer.o ${OBJECTDIR}/main.o ${OBJECTDIR}/BoardFunctions.o ${OBJECTDIR}/Buttons.o ${OBJECTDIR}/DS3231.o ${OBJECTDIR}/Program.o ${OBJECTDIR}/I2C5_Master.o ${OBJECTDIR}/UART1.o
 
 # Source Files
-SOURCEFILES=SystemFunctions.c UpdateTimer.c main.c BoardFunctions.c Buttons.c UART2.c DS3231.c I2C2_Master.c Program.c
+SOURCEFILES=SystemFunctions.c UpdateTimer.c main.c BoardFunctions.c Buttons.c DS3231.c Program.c I2C5_Master.c UART1.c
 
 
 
@@ -90,7 +90,7 @@ ifneq ($(INFORMATION_MESSAGE), )
 endif
 	${MAKE}  -f nbproject/Makefile-V3Board.mk dist/${CND_CONF}/${IMAGE_TYPE}/PIC32OptoRig.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}
 
-MP_PROCESSOR_OPTION=32MX795F512L
+MP_PROCESSOR_OPTION=32MX795F512H
 MP_LINKER_FILE_OPTION=
 # ------------------------------------------------------------------------------------
 # Rules for buildStep: assemble
@@ -137,29 +137,29 @@ ${OBJECTDIR}/Buttons.o: Buttons.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/Buttons.o 
 	@${FIXDEPS} "${OBJECTDIR}/Buttons.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_REAL_ICE=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -O3 -D_SUPPRESS_PLIB_WARNING -D_DISABLE_OPENADC10_CONFIGPORT_WARNING -MMD -MF "${OBJECTDIR}/Buttons.o.d" -o ${OBJECTDIR}/Buttons.o Buttons.c    -DXPRJ_V3Board=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
 	
-${OBJECTDIR}/UART2.o: UART2.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/UART2.o.d 
-	@${RM} ${OBJECTDIR}/UART2.o 
-	@${FIXDEPS} "${OBJECTDIR}/UART2.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_REAL_ICE=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -O3 -D_SUPPRESS_PLIB_WARNING -D_DISABLE_OPENADC10_CONFIGPORT_WARNING -MMD -MF "${OBJECTDIR}/UART2.o.d" -o ${OBJECTDIR}/UART2.o UART2.c    -DXPRJ_V3Board=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
-	
 ${OBJECTDIR}/DS3231.o: DS3231.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/DS3231.o.d 
 	@${RM} ${OBJECTDIR}/DS3231.o 
 	@${FIXDEPS} "${OBJECTDIR}/DS3231.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_REAL_ICE=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -O3 -D_SUPPRESS_PLIB_WARNING -D_DISABLE_OPENADC10_CONFIGPORT_WARNING -MMD -MF "${OBJECTDIR}/DS3231.o.d" -o ${OBJECTDIR}/DS3231.o DS3231.c    -DXPRJ_V3Board=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
 	
-${OBJECTDIR}/I2C2_Master.o: I2C2_Master.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/I2C2_Master.o.d 
-	@${RM} ${OBJECTDIR}/I2C2_Master.o 
-	@${FIXDEPS} "${OBJECTDIR}/I2C2_Master.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_REAL_ICE=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -O3 -D_SUPPRESS_PLIB_WARNING -D_DISABLE_OPENADC10_CONFIGPORT_WARNING -MMD -MF "${OBJECTDIR}/I2C2_Master.o.d" -o ${OBJECTDIR}/I2C2_Master.o I2C2_Master.c    -DXPRJ_V3Board=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
-	
 ${OBJECTDIR}/Program.o: Program.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/Program.o.d 
 	@${RM} ${OBJECTDIR}/Program.o 
 	@${FIXDEPS} "${OBJECTDIR}/Program.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_REAL_ICE=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -O3 -D_SUPPRESS_PLIB_WARNING -D_DISABLE_OPENADC10_CONFIGPORT_WARNING -MMD -MF "${OBJECTDIR}/Program.o.d" -o ${OBJECTDIR}/Program.o Program.c    -DXPRJ_V3Board=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
+	
+${OBJECTDIR}/I2C5_Master.o: I2C5_Master.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/I2C5_Master.o.d 
+	@${RM} ${OBJECTDIR}/I2C5_Master.o 
+	@${FIXDEPS} "${OBJECTDIR}/I2C5_Master.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_REAL_ICE=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -O3 -D_SUPPRESS_PLIB_WARNING -D_DISABLE_OPENADC10_CONFIGPORT_WARNING -MMD -MF "${OBJECTDIR}/I2C5_Master.o.d" -o ${OBJECTDIR}/I2C5_Master.o I2C5_Master.c    -DXPRJ_V3Board=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
+	
+${OBJECTDIR}/UART1.o: UART1.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/UART1.o.d 
+	@${RM} ${OBJECTDIR}/UART1.o 
+	@${FIXDEPS} "${OBJECTDIR}/UART1.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_REAL_ICE=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -O3 -D_SUPPRESS_PLIB_WARNING -D_DISABLE_OPENADC10_CONFIGPORT_WARNING -MMD -MF "${OBJECTDIR}/UART1.o.d" -o ${OBJECTDIR}/UART1.o UART1.c    -DXPRJ_V3Board=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
 	
 else
 ${OBJECTDIR}/SystemFunctions.o: SystemFunctions.c  nbproject/Makefile-${CND_CONF}.mk
@@ -192,29 +192,29 @@ ${OBJECTDIR}/Buttons.o: Buttons.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/Buttons.o 
 	@${FIXDEPS} "${OBJECTDIR}/Buttons.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -O3 -D_SUPPRESS_PLIB_WARNING -D_DISABLE_OPENADC10_CONFIGPORT_WARNING -MMD -MF "${OBJECTDIR}/Buttons.o.d" -o ${OBJECTDIR}/Buttons.o Buttons.c    -DXPRJ_V3Board=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
 	
-${OBJECTDIR}/UART2.o: UART2.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/UART2.o.d 
-	@${RM} ${OBJECTDIR}/UART2.o 
-	@${FIXDEPS} "${OBJECTDIR}/UART2.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -O3 -D_SUPPRESS_PLIB_WARNING -D_DISABLE_OPENADC10_CONFIGPORT_WARNING -MMD -MF "${OBJECTDIR}/UART2.o.d" -o ${OBJECTDIR}/UART2.o UART2.c    -DXPRJ_V3Board=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
-	
 ${OBJECTDIR}/DS3231.o: DS3231.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/DS3231.o.d 
 	@${RM} ${OBJECTDIR}/DS3231.o 
 	@${FIXDEPS} "${OBJECTDIR}/DS3231.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -O3 -D_SUPPRESS_PLIB_WARNING -D_DISABLE_OPENADC10_CONFIGPORT_WARNING -MMD -MF "${OBJECTDIR}/DS3231.o.d" -o ${OBJECTDIR}/DS3231.o DS3231.c    -DXPRJ_V3Board=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
 	
-${OBJECTDIR}/I2C2_Master.o: I2C2_Master.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/I2C2_Master.o.d 
-	@${RM} ${OBJECTDIR}/I2C2_Master.o 
-	@${FIXDEPS} "${OBJECTDIR}/I2C2_Master.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -O3 -D_SUPPRESS_PLIB_WARNING -D_DISABLE_OPENADC10_CONFIGPORT_WARNING -MMD -MF "${OBJECTDIR}/I2C2_Master.o.d" -o ${OBJECTDIR}/I2C2_Master.o I2C2_Master.c    -DXPRJ_V3Board=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
-	
 ${OBJECTDIR}/Program.o: Program.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/Program.o.d 
 	@${RM} ${OBJECTDIR}/Program.o 
 	@${FIXDEPS} "${OBJECTDIR}/Program.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -O3 -D_SUPPRESS_PLIB_WARNING -D_DISABLE_OPENADC10_CONFIGPORT_WARNING -MMD -MF "${OBJECTDIR}/Program.o.d" -o ${OBJECTDIR}/Program.o Program.c    -DXPRJ_V3Board=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
+	
+${OBJECTDIR}/I2C5_Master.o: I2C5_Master.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/I2C5_Master.o.d 
+	@${RM} ${OBJECTDIR}/I2C5_Master.o 
+	@${FIXDEPS} "${OBJECTDIR}/I2C5_Master.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -O3 -D_SUPPRESS_PLIB_WARNING -D_DISABLE_OPENADC10_CONFIGPORT_WARNING -MMD -MF "${OBJECTDIR}/I2C5_Master.o.d" -o ${OBJECTDIR}/I2C5_Master.o I2C5_Master.c    -DXPRJ_V3Board=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
+	
+${OBJECTDIR}/UART1.o: UART1.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/UART1.o.d 
+	@${RM} ${OBJECTDIR}/UART1.o 
+	@${FIXDEPS} "${OBJECTDIR}/UART1.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -O3 -D_SUPPRESS_PLIB_WARNING -D_DISABLE_OPENADC10_CONFIGPORT_WARNING -MMD -MF "${OBJECTDIR}/UART1.o.d" -o ${OBJECTDIR}/UART1.o UART1.c    -DXPRJ_V3Board=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
 	
 endif
 

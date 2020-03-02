@@ -37,7 +37,7 @@ typedef union {
 } errorFlags_t;
 
 
-void ConfigureUART2(void);
+void ConfigureUART1(void);
 void SendString(unsigned char* array);
 void ProcessPacket();
 void SendByte(unsigned char n);
