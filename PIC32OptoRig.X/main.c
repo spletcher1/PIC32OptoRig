@@ -23,20 +23,20 @@ void InitApp(void){
   ConfigureUpdateTimer();
   ConfigureUART1();
   ConfigureButtons();
-  //Initialize_24LC256();// 500ms delay
-  //InitRTC();
-  //ClearProgram();
+  ConfigureI2C5();
+  InitRTC();
+  ClearProgram();
 
-  //Delay_ms(1000);
+  DelayMs(1000);
   
-  //ConfigureOpto();
-  //ConfigureMainTimer();
-  //ErrorsRegister=0;
+  ConfigureOpto();
+  ConfigureUpdateTimer();
+  ErrorsRegister.byte=0;
   
-  //if(IsDefaultProgramSaved_24LC256())
-  //  LoadProgram_24LC256();
-  //else
-  //  ConfigureSimpleProgram(30,30);
+  if(IsDefaultProgramSaved_24LC256())
+    LoadProgram_24LC256();
+  else
+    ConfigureSimpleProgram(30,30);
 
   //ConfigureSimpleProgram(5,10);
   //SaveProgram_24LC256();
@@ -54,7 +54,7 @@ void InitApp(void){
 void main(void) {
   InitApp();
   HB_OFF();
-  /*
+  
   StageProgram();
   while (1) {
     if(updateTrigger1ms){
@@ -77,5 +77,4 @@ void main(void) {
      packetReceived=0;
     }
   }
-  */
 }

@@ -266,9 +266,9 @@ void ProcessProgramStep(){
   // This is at the end to override things that come previously
   if(theProgram.Steps[theProgram.CurrentStep].ActiveTriggers >0){
     if(theProgram.Steps[theProgram.CurrentStep].ActiveTriggers & 0x01)
-      if(TRIGGER1_PORT==1)
+      if(TRIGGER_PORT==1)
         ison=1;
-    if(SUPRESSOR1_PORT==1)
+    if(SUPRESSOR_PORT==1)
       ison=0;
     if(ison)
       SetOptoState(0x0F);
