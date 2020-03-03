@@ -6,7 +6,6 @@
 #include "SP_ConfigP32.h"           /* User funct/params, such as InitApp             */
 
 extern unsigned char volatile updateTrigger1ms;
-extern unsigned char volatile updateTrigger500ms;
 extern unsigned char volatile updateTrigger1sec;
 extern unsigned char signalButton1Pressed;
 extern unsigned char signalButton2Pressed;

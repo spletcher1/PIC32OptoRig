@@ -3,19 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/scott/Desktop/Github%20Local/PIC32OptoRig/PIC32OptoRig.X/I2C5_Master.h</file>
-            <file>file:/C:/Users/scott/Desktop/Github%20Local/PIC32OptoRig/PIC32OptoRig.X/I2C5_Master.c</file>
-            <file>file:/C:/Users/scott/Desktop/Github%20Local/PIC32OptoRig/PIC32OptoRig.X/EEPROM.c</file>
-            <file>file:/C:/Users/scott/Desktop/Github%20Local/PIC32OptoRig/PIC32OptoRig.X/DS3231.c</file>
-            <file>file:/C:/Users/scott/Desktop/Github%20Local/PIC32OptoRig/PIC32OptoRig.X/GlobalIncludes.h</file>
-            <file>file:/C:/Users/scott/Desktop/Github%20Local/PIC32OptoRig/PIC32OptoRig.X/BoardFunctions.c</file>
-            <file>file:/C:/Users/scott/Desktop/Github%20Local/PIC32OptoRig/PIC32OptoRig.X/OptoFunctions.c</file>
-            <file>file:/C:/Users/scott/Desktop/Github%20Local/PIC32OptoRig/PIC32OptoRig.X/OptoFunctions.h</file>
-            <file>file:/C:/Users/scott/Desktop/Github%20Local/PIC32OptoRig/PIC32OptoRig.X/HardwareProfile.h</file>
-            <file>file:/C:/Users/scott/Desktop/Github%20Local/PIC32OptoRig/PIC32OptoRig.X/UpdateTimer.c</file>
-            <file>file:/C:/Users/scott/Desktop/Github%20Local/PIC32OptoRig/PIC32OptoRig.X/Program.c</file>
-            <file>file:/C:/Users/scott/Desktop/Github%20Local/PIC32OptoRig/PIC32OptoRig.X/main.c</file>
-            <file>file:/C:/Users/scott/Desktop/Github%20Local/PIC32OptoRig/PIC32OptoRig.X/Program.h</file>
+            <file>file:/D:/LocalCloud/GithubLocal/PIC32OptoRig/PIC32OptoRig.X/EEPROM.h</file>
+            <file>file:/D:/LocalCloud/GithubLocal/PIC32OptoRig/PIC32OptoRig.X/I2C5_Master.h</file>
+            <file>file:/D:/LocalCloud/GithubLocal/PIC32OptoRig/PIC32OptoRig.X/GlobalIncludes.h</file>
+            <file>file:/D:/LocalCloud/GithubLocal/PIC32OptoRig/PIC32OptoRig.X/UpdateTimer.c</file>
+            <file>file:/D:/LocalCloud/GithubLocal/PIC32OptoRig/PIC32OptoRig.X/EEPROM.c</file>
+            <file>file:/D:/LocalCloud/GithubLocal/PIC32OptoRig/PIC32OptoRig.X/SystemFunctions.c</file>
         </group>
     </open-files>
 </project-private>

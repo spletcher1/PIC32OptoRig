@@ -18,12 +18,17 @@
 
 #define MAXPROGRAMSTEPS 100
 
+#define HEARTBEAT_PORT  _RE4
+#define HEARTBEAT_TRIS  _TRISE4
+#define FLIP_HEARTBEAT_LED() PORTEINV = 0x0010
+#define HB_ON() _RE4=1
+#define HB_OFF() _RE4=0
 
-#define HEARTBEAT_LAT  _RE3
-#define HEARTBEAT_TRIS  _TRISE3
-#define FLIP_HEARTBEAT_LED() PORTEINV = 0x0008
-#define HB_ON() _RE3=1
-#define HB_OFF() _RE3=0
+#define SIGNALLED_PORT  _RE5
+#define SIGNALLED_TRIS  _TRISE5
+#define FLIP_SIGNALLED_LED() PORTEINV = 0x0020
+#define SIGNALLED_ON() _RE5=1
+#define SIGNALLED_OFF() _RE5=0
 
 // The following lines apply to all of the boards.
 
