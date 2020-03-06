@@ -8,6 +8,8 @@ int volatile optoOffThreshold;
 unsigned char volatile OptoState;
 unsigned char volatile isOptoOn;
 
+LEDFLAGS IsLEDPulsed;
+
 void inline SetOptoState(unsigned char os){
   OptoState=os;
 }
@@ -27,6 +29,8 @@ void SetOptoParameters(unsigned int hz, unsigned int pw) {
     }
     optoOnCounter = optoOffCounter = 0;
 }
+
+
 void SetPulseWidth_ms(unsigned int pw) {
   SetOptoParameters(hertz, pw);
 }
@@ -51,6 +55,15 @@ void inline Opto_On() {
 void inline Opto_Off() {
   isOptoOn=0;
   ALLLED_OFF();
+  if((OptoState & 0x01) & IsLEDPulsed.bits.LED1)
+      LEDSTRING1_ON();
+  if((OptoState & 0x02) & IsLEDPulsed.bits.LED2)
+      LEDSTRING2_ON();
+  if((OptoState & 0x04) & IsLEDPulsed.bits.LED3)
+      LEDSTRING3_ON();
+  if((OptoState & 0x08) & IsLEDPulsed.bits.LED4)
+      LEDSTRING4_ON();
+  
 }
 
 void ConfigureOpto(void) {
@@ -60,6 +73,9 @@ void ConfigureOpto(void) {
   LEDSTRING4_TRIS = 0;
   Opto_Off();
   SetOptoParameters(40, 8);
+  //Default is LED strings 1 and 2 are pulsed.
+  // Strings 3 and 4 are not.
+  IsLEDPulsed.ledField=0x03;
   //SetOptoParameters(200 , 1);
   OptoState = 0x00;
 

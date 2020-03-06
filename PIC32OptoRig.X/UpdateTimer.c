@@ -19,8 +19,7 @@ void ConfigureUpdateTimer(void) {
 
 }
 
-// This timer goes off every 100ms
-
+// This timer goes off every 1ms
 void __ISR(_TIMER_1_VECTOR, IPL2SOFT) Timer1Handler(void) {
     hbCounter++;
     // Deal with heartbeat
