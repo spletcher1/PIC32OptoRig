@@ -24,6 +24,7 @@
       <itemPath>UART1.h</itemPath>
       <itemPath>OptoFunctions.h</itemPath>
       <itemPath>EEPROM.h</itemPath>
+      <itemPath>LEDControl.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -44,6 +45,7 @@
       <itemPath>UART1.c</itemPath>
       <itemPath>EEPROM.c</itemPath>
       <itemPath>OptoFunctions.c</itemPath>
+      <itemPath>LEDControl.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

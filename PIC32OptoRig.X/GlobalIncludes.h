@@ -18,6 +18,7 @@
 #include "EEPROM.h"
 #include "Program.h"
 #include "Buttons.h"
+#include "LEDControl.h"
 #include <stdio.h>
 
 //#include <math.h>

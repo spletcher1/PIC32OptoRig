@@ -15,6 +15,10 @@ extern unsigned char packetReceived;
 
 errorFlags_t ErrorsRegister;
 
+// Eventually when we implement closed loop, we may have to
+// use these CurrentValues in the LEDControl.c
+int CurrentValues[NUMLEDS];
+
 void InitApp(void){
   
   Startup();  
@@ -59,6 +63,7 @@ void main(void) {
     if(updateTrigger1ms){
       ProcessButtonStep();
       ProcessProgramStep();
+      StepLEDControl();
       updateTrigger1ms=0;
     }
     if(updateTrigger1sec){

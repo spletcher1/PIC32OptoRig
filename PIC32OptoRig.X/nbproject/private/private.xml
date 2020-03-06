@@ -3,10 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/LocalCloud/GithubLocal/PIC32OptoRig/PIC32OptoRig.X/EEPROM.h</file>
-            <file>file:/D:/LocalCloud/GithubLocal/PIC32OptoRig/PIC32OptoRig.X/I2C5_Master.h</file>
-            <file>file:/D:/LocalCloud/GithubLocal/PIC32OptoRig/PIC32OptoRig.X/GlobalIncludes.h</file>
             <file>file:/D:/LocalCloud/GithubLocal/PIC32OptoRig/PIC32OptoRig.X/UpdateTimer.c</file>
+            <file>file:/D:/LocalCloud/GithubLocal/PIC32OptoRig/PIC32OptoRig.X/GlobalIncludes.h</file>
+            <file>file:/D:/LocalCloud/GithubLocal/PIC32OptoRig/PIC32OptoRig.X/I2C5_Master.h</file>
+            <file>file:/D:/LocalCloud/GithubLocal/PIC32OptoRig/PIC32OptoRig.X/EEPROM.h</file>
             <file>file:/D:/LocalCloud/GithubLocal/PIC32OptoRig/PIC32OptoRig.X/EEPROM.c</file>
             <file>file:/D:/LocalCloud/GithubLocal/PIC32OptoRig/PIC32OptoRig.X/SystemFunctions.c</file>
         </group>

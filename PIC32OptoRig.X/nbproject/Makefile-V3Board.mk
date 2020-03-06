@@ -57,17 +57,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=SystemFunctions.c UpdateTimer.c main.c BoardFunctions.c Buttons.c DS3231.c Program.c I2C5_Master.c UART1.c EEPROM.c OptoFunctions.c
+SOURCEFILES_QUOTED_IF_SPACED=SystemFunctions.c UpdateTimer.c main.c BoardFunctions.c Buttons.c DS3231.c Program.c I2C5_Master.c UART1.c EEPROM.c OptoFunctions.c LEDControl.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/SystemFunctions.o ${OBJECTDIR}/UpdateTimer.o ${OBJECTDIR}/main.o ${OBJECTDIR}/BoardFunctions.o ${OBJECTDIR}/Buttons.o ${OBJECTDIR}/DS3231.o ${OBJECTDIR}/Program.o ${OBJECTDIR}/I2C5_Master.o ${OBJECTDIR}/UART1.o ${OBJECTDIR}/EEPROM.o ${OBJECTDIR}/OptoFunctions.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/SystemFunctions.o.d ${OBJECTDIR}/UpdateTimer.o.d ${OBJECTDIR}/main.o.d ${OBJECTDIR}/BoardFunctions.o.d ${OBJECTDIR}/Buttons.o.d ${OBJECTDIR}/DS3231.o.d ${OBJECTDIR}/Program.o.d ${OBJECTDIR}/I2C5_Master.o.d ${OBJECTDIR}/UART1.o.d ${OBJECTDIR}/EEPROM.o.d ${OBJECTDIR}/OptoFunctions.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/SystemFunctions.o ${OBJECTDIR}/UpdateTimer.o ${OBJECTDIR}/main.o ${OBJECTDIR}/BoardFunctions.o ${OBJECTDIR}/Buttons.o ${OBJECTDIR}/DS3231.o ${OBJECTDIR}/Program.o ${OBJECTDIR}/I2C5_Master.o ${OBJECTDIR}/UART1.o ${OBJECTDIR}/EEPROM.o ${OBJECTDIR}/OptoFunctions.o ${OBJECTDIR}/LEDControl.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/SystemFunctions.o.d ${OBJECTDIR}/UpdateTimer.o.d ${OBJECTDIR}/main.o.d ${OBJECTDIR}/BoardFunctions.o.d ${OBJECTDIR}/Buttons.o.d ${OBJECTDIR}/DS3231.o.d ${OBJECTDIR}/Program.o.d ${OBJECTDIR}/I2C5_Master.o.d ${OBJECTDIR}/UART1.o.d ${OBJECTDIR}/EEPROM.o.d ${OBJECTDIR}/OptoFunctions.o.d ${OBJECTDIR}/LEDControl.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/SystemFunctions.o ${OBJECTDIR}/UpdateTimer.o ${OBJECTDIR}/main.o ${OBJECTDIR}/BoardFunctions.o ${OBJECTDIR}/Buttons.o ${OBJECTDIR}/DS3231.o ${OBJECTDIR}/Program.o ${OBJECTDIR}/I2C5_Master.o ${OBJECTDIR}/UART1.o ${OBJECTDIR}/EEPROM.o ${OBJECTDIR}/OptoFunctions.o
+OBJECTFILES=${OBJECTDIR}/SystemFunctions.o ${OBJECTDIR}/UpdateTimer.o ${OBJECTDIR}/main.o ${OBJECTDIR}/BoardFunctions.o ${OBJECTDIR}/Buttons.o ${OBJECTDIR}/DS3231.o ${OBJECTDIR}/Program.o ${OBJECTDIR}/I2C5_Master.o ${OBJECTDIR}/UART1.o ${OBJECTDIR}/EEPROM.o ${OBJECTDIR}/OptoFunctions.o ${OBJECTDIR}/LEDControl.o
 
 # Source Files
-SOURCEFILES=SystemFunctions.c UpdateTimer.c main.c BoardFunctions.c Buttons.c DS3231.c Program.c I2C5_Master.c UART1.c EEPROM.c OptoFunctions.c
+SOURCEFILES=SystemFunctions.c UpdateTimer.c main.c BoardFunctions.c Buttons.c DS3231.c Program.c I2C5_Master.c UART1.c EEPROM.c OptoFunctions.c LEDControl.c
 
 
 
@@ -173,6 +173,12 @@ ${OBJECTDIR}/OptoFunctions.o: OptoFunctions.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/OptoFunctions.o 
 	@${FIXDEPS} "${OBJECTDIR}/OptoFunctions.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_REAL_ICE=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -D_SUPPRESS_PLIB_WARNING -D_DISABLE_OPENADC10_CONFIGPORT_WARNING -MMD -MF "${OBJECTDIR}/OptoFunctions.o.d" -o ${OBJECTDIR}/OptoFunctions.o OptoFunctions.c    -DXPRJ_V3Board=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
 	
+${OBJECTDIR}/LEDControl.o: LEDControl.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/LEDControl.o.d 
+	@${RM} ${OBJECTDIR}/LEDControl.o 
+	@${FIXDEPS} "${OBJECTDIR}/LEDControl.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_REAL_ICE=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -D_SUPPRESS_PLIB_WARNING -D_DISABLE_OPENADC10_CONFIGPORT_WARNING -MMD -MF "${OBJECTDIR}/LEDControl.o.d" -o ${OBJECTDIR}/LEDControl.o LEDControl.c    -DXPRJ_V3Board=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
+	
 else
 ${OBJECTDIR}/SystemFunctions.o: SystemFunctions.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
@@ -239,6 +245,12 @@ ${OBJECTDIR}/OptoFunctions.o: OptoFunctions.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/OptoFunctions.o.d 
 	@${RM} ${OBJECTDIR}/OptoFunctions.o 
 	@${FIXDEPS} "${OBJECTDIR}/OptoFunctions.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -D_SUPPRESS_PLIB_WARNING -D_DISABLE_OPENADC10_CONFIGPORT_WARNING -MMD -MF "${OBJECTDIR}/OptoFunctions.o.d" -o ${OBJECTDIR}/OptoFunctions.o OptoFunctions.c    -DXPRJ_V3Board=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
+	
+${OBJECTDIR}/LEDControl.o: LEDControl.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/LEDControl.o.d 
+	@${RM} ${OBJECTDIR}/LEDControl.o 
+	@${FIXDEPS} "${OBJECTDIR}/LEDControl.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -D_SUPPRESS_PLIB_WARNING -D_DISABLE_OPENADC10_CONFIGPORT_WARNING -MMD -MF "${OBJECTDIR}/LEDControl.o.d" -o ${OBJECTDIR}/LEDControl.o LEDControl.c    -DXPRJ_V3Board=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
 	
 endif
 

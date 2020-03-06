@@ -50,10 +50,7 @@ void inline Opto_On() {
 
 void inline Opto_Off() {
   isOptoOn=0;
-  LEDSTRING1_OFF();
-  LEDSTRING2_OFF();
-  LEDSTRING3_OFF();
-  LEDSTRING4_OFF();
+  ALLLED_OFF();
 }
 
 void ConfigureOpto(void) {
