@@ -10,6 +10,69 @@ unsigned char volatile isOptoOn;
 
 LEDFLAGS IsLEDPulsed;
 
+#define PRESCALE               64
+#define TOGGLES_PER_SEC        1000
+#define T2_TICK               (GetPeripheralClock()/PRESCALE/TOGGLES_PER_SEC)
+
+
+void ConfigurePWMTimer(void) {    
+    OpenTimer2(T2_ON | T2_32BIT_MODE_ON | T2_SOURCE_INT | T2_PS_1_64, T2_TICK);
+    ConfigIntTimer2(T2_INT_ON | T2_INT_PRIOR_3);        
+}
+
+void ConfigurePWM(){
+  
+    ConfigurePWMTimer();
+    // Turn off the module before configuring   
+    OC1CON = 0x0000;
+    // PWM mode without fault pin.
+    OC1CONbits.OCM0=0;
+    OC1CONbits.OCM1=1;
+    OC1CONbits.OCM2=1;
+    
+    OC1CONbits.OCTSEL=0; // Use timer 2 as the clock source.
+    OC1CONbits.OC32=1; //Use 16-bit compare.
+    
+    OC1CONbits.SIDL=0; //Continue when in idle mode.
+    
+    OC1CONbits.ON=0; //Turn off module.
+        
+    OC1R=PR2>>1;
+    OC1RS=PR2>>1;
+           
+    T2CONSET=0x8000;
+    
+    OC1CONbits.ON=1; // Turn PWM on.
+}
+
+// Based on the given prescaler the max frequency is
+// 2kHz with duty cycle >= 1%.
+void SetPWM(unsigned int freq,unsigned int dc){      
+    float tmp, tmp2;
+    
+    if(freq>2000) freq=2000;
+    if(dc>100) dc=100;
+    
+    tmp=(float)(GetPeripheralClock()/PRESCALE/(float)freq);    
+        
+    tmp2=tmp*((float)dc/100.0);
+            
+    PR2=(unsigned int)tmp;
+    OC1RS= (unsigned int)tmp2;        
+}
+
+void __ISR(_TIMER_2_VECTOR, IPL3SOFT) Timer2Handler(void) {
+    PORTEINV = 0x0002;    
+    mT2ClearIntFlag();
+
+}
+
+void __ISR(_OUTPUT_COMPARE_1_VECTOR, IPL4SOFT) OC1Handler(void) {
+    PORTEINV = 0x0001;
+    mOC1ClearIntFlag();
+}
+
+
 void inline SetOptoState(unsigned char os){
   OptoState=os;
 }
