@@ -45,9 +45,9 @@ void SaveProgram_24LC256(){
     b = theProgram.Steps[i].Frequency & 0x00FF;
     WriteByte_24LC256(counter++,a);
     WriteByte_24LC256(counter++,b);
-    a = theProgram.Steps[i].PulseWidth>>8;
+    a = theProgram.Steps[i].DutyCycle>>8;
     a = a & 0x00FF;
-    b = theProgram.Steps[i].PulseWidth & 0x00FF;
+    b = theProgram.Steps[i].DutyCycle & 0x00FF;
     WriteByte_24LC256(counter++,a);
     WriteByte_24LC256(counter++,b);
     triggers=theProgram.Steps[i].ActiveTriggers;

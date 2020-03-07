@@ -240,15 +240,7 @@ void SetMaxTimeOn(unsigned int maxTime){
 
 void SetCurrentOptoState() {
     int OptoState;
-    OptoState=0;
-    if (IsLEDOn.bits.LED1)
-        OptoState = 0x01;
-    if (IsLEDOn.bits.LED2)
-        OptoState = 0x02;
-    if (IsLEDOn.bits.LED3)
-        OptoState |= 0x04;
-    if (IsLEDOn.bits.LED4)
-        OptoState |= 0x08;  
+    OptoState=IsLEDOn.ledField & 0x0F;
     SetOptoState(OptoState);
 }
 

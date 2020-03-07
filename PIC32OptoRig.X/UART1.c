@@ -99,7 +99,7 @@ void SendInt(int a){
 
 void ConfigureUART1Interrupts(){
 	// For now we interrupt on RX
-	INTSetVectorPriority(INT_UART_1_VECTOR,INT_PRIORITY_LEVEL_4);
+	INTSetVectorPriority(INT_UART_1_VECTOR,INT_PRIORITY_LEVEL_5);
 	INTClearFlag(INT_U1RX);
     INTClearFlag(INT_U1TX);    
 	INTEnable(INT_U1RX,INT_ENABLED);
@@ -127,7 +127,7 @@ void ConfigureUART1(void) {
 // Additional timings revealed that it takes about 570us to receive the status request
 // and then complete sending the response package. This seems well within the needed
 // interval. This timing could easily handle even 100 DFM.
-void __ISR(_UART1_VECTOR, IPL4AUTO) UART1Interrupt(void){
+void __ISR(_UART1_VECTOR, IPL5AUTO) UART1Interrupt(void){
 	int error;
 	unsigned char data,tmp;
 	error = UART1GetErrors();	

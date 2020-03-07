@@ -51,7 +51,7 @@ void UpdateProgram(){
   theProgram.totalProgramDuration = elapsedSec;
 }
 
-void AddProgramStep(unsigned int islighton, unsigned int freq, unsigned int pw, unsigned char trigger, unsigned long int duration){
+void AddProgramStep(unsigned int islighton, unsigned int freq, unsigned int dc, unsigned char trigger, unsigned long int duration){
   if(theProgram.NumSteps>=MAXPROGRAMSTEPS) {
     ErrorsRegister.bits.TooManyStepsError=1;
     return;
@@ -59,7 +59,7 @@ void AddProgramStep(unsigned int islighton, unsigned int freq, unsigned int pw, 
   theProgram.Steps[theProgram.NumSteps].StepNumber=theProgram.NumSteps+1;
   theProgram.Steps[theProgram.NumSteps].IsLightOn=islighton;
   theProgram.Steps[theProgram.NumSteps].Frequency=freq;
-  theProgram.Steps[theProgram.NumSteps].PulseWidth=pw;
+  theProgram.Steps[theProgram.NumSteps].DutyCycle=dc;
   theProgram.Steps[theProgram.NumSteps].ActiveTriggers=trigger;
   theProgram.Steps[theProgram.NumSteps].DurationSeconds=duration;
   theProgram.NumSteps++;
@@ -68,8 +68,8 @@ void AddProgramStep(unsigned int islighton, unsigned int freq, unsigned int pw, 
 void ConfigureSimpleProgram(unsigned long int secondsOn, unsigned long int secondsOff){
   ClearProgram();
   theProgram.programType = LOOPING;
-  AddProgramStep(1,40,80,0,secondsOn);
-  AddProgramStep(0,40,80,0,secondsOff);
+  AddProgramStep(1,40,50,0,secondsOn);
+  AddProgramStep(0,40,50,0,secondsOff);
   theProgram.startTime.seconds = 0;
   theProgram.startTime.minutes = 0;
   theProgram.startTime.hours =  0;
@@ -127,7 +127,7 @@ void StartProgram() {
     return;
   }
   // Need to set the first program step going.
-  SetOptoParameters(theProgram.Steps[theProgram.CurrentStep].Frequency, theProgram.Steps[theProgram.CurrentStep].PulseWidth);
+  SetOptoParameters(theProgram.Steps[theProgram.CurrentStep].Frequency, theProgram.Steps[theProgram.CurrentStep].DutyCycle);
   if (theProgram.Steps[theProgram.CurrentStep].IsLightOn == 0) {
     SetOptoState(0x00);
   }
@@ -205,7 +205,7 @@ void ProcessProgramValidationStep(){
     StopProgram();
     return;
   }
-  SetOptoParameters(theProgram.Steps[theProgram.CurrentStep].Frequency, theProgram.Steps[theProgram.CurrentStep].PulseWidth);
+  SetOptoParameters(theProgram.Steps[theProgram.CurrentStep].Frequency, theProgram.Steps[theProgram.CurrentStep].DutyCycle);
   if (theProgram.Steps[theProgram.CurrentStep].IsLightOn == 0) {
     SetOptoState(0x00);
   }
@@ -253,7 +253,7 @@ void ProcessProgramStep(){
           theProgram.correctedSeconds=0;
         }
       }
-      SetOptoParameters(theProgram.Steps[theProgram.CurrentStep].Frequency,theProgram.Steps[theProgram.CurrentStep].PulseWidth);
+      SetOptoParameters(theProgram.Steps[theProgram.CurrentStep].Frequency,theProgram.Steps[theProgram.CurrentStep].DutyCycle);
       if(theProgram.Steps[theProgram.CurrentStep].IsLightOn==0) {
         SetOptoState(0x00);
       }
@@ -297,8 +297,8 @@ void SendProgramData(){
       barray[bindex++]=(unsigned char)(theProgram.Steps[i].IsLightOn);
       barray[bindex++]=(unsigned char)(theProgram.Steps[i].Frequency>>8);
       barray[bindex++]=(unsigned char)(theProgram.Steps[i].Frequency);
-      barray[bindex++]=(unsigned char)(theProgram.Steps[i].PulseWidth>>8);
-      barray[bindex++]=(unsigned char)(theProgram.Steps[i].PulseWidth);
+      barray[bindex++]=(unsigned char)(theProgram.Steps[i].DutyCycle>>8);
+      barray[bindex++]=(unsigned char)(theProgram.Steps[i].DutyCycle);
       barray[bindex++]=(unsigned char)(theProgram.Steps[i].ActiveTriggers);
       barray[bindex++]=(unsigned char)(theProgram.Steps[i].DurationSeconds>>24);
       barray[bindex++]=(unsigned char)(theProgram.Steps[i].DurationSeconds>>16);
@@ -400,7 +400,7 @@ void SendProgramStatus(){
 
 void LoadProgramFromUART(unsigned char* buffer, unsigned int len){
   unsigned char nSteps,i;
-  unsigned int lights,freq,pw,pindex;
+  unsigned int lights,freq,dc,pindex;
   unsigned long int dur;
   unsigned char triggers;
 
@@ -431,11 +431,11 @@ void LoadProgramFromUART(unsigned char* buffer, unsigned int len){
   for(i=0;i<nSteps;i++){
     lights = buffer[pindex];
     freq = (unsigned int)(buffer[pindex+1]<<8) + (unsigned int)(buffer[pindex+2]); 
-    pw = (unsigned int)(buffer[pindex+3]<<8) + (unsigned int)(buffer[pindex+4]);
+    dc = (unsigned int)(buffer[pindex+3]<<8) + (unsigned int)(buffer[pindex+4]);
     triggers = buffer[pindex+5];
     dur = (unsigned int)(buffer[pindex+6]<<24) + (unsigned int)(buffer[pindex+7]<<16)+
           (unsigned int)(buffer[pindex+8]<<8) + (unsigned int)(buffer[pindex+9]);
-    AddProgramStep(lights, freq,  pw, triggers, dur);
+    AddProgramStep(lights, freq,  dc, triggers, dur);
     pindex+=10;
   }
   UpdateProgram();

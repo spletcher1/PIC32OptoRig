@@ -12,7 +12,7 @@ void SendProgramStatus();
 void ClearProgram();
 void CheckProgramForStart();
 void LoadProgram();
-void AddProgramStep(unsigned int islighton, unsigned int freq, unsigned int pw,unsigned char triggers, unsigned long int duration);
+void AddProgramStep(unsigned int islighton, unsigned int freq, unsigned int dc,unsigned char triggers, unsigned long int duration);
 void LoadProgramFromUART(unsigned char* buffer, unsigned int len);
 void AddStepsFromUART(unsigned char* buffer, unsigned int len);
 void UpdateProgram(void);
@@ -38,7 +38,7 @@ struct ProgramStep {
   unsigned int StepNumber;
   unsigned int IsLightOn;
   unsigned int Frequency;
-  unsigned int PulseWidth;
+  unsigned int DutyCycle;
   unsigned char ActiveTriggers;
   unsigned long int DurationSeconds;
   unsigned long int ElapsedDurationAtEnd;

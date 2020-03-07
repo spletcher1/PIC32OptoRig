@@ -19,6 +19,8 @@
 
 #define NUMLEDS  4
 
+#define PWM_PORT _RD0
+
 #define HEARTBEAT_PORT  _RE4
 #define HEARTBEAT_TRIS  _TRISE4
 #define FLIP_HEARTBEAT_LED() PORTEINV = 0x0010
