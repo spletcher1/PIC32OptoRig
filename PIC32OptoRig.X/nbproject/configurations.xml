@@ -5,10 +5,8 @@
                    displayName="Header Files"
                    projectFiles="true">
       <logicalFolder name="f1" displayName="PLib Files" projectFiles="true">
-        <itemPath>system.h</itemPath>
         <itemPath>timer.h</itemPath>
         <itemPath>uart.h</itemPath>
-        <itemPath>adc10.h</itemPath>
       </logicalFolder>
       <itemPath>SystemFunctions.h</itemPath>
       <itemPath>UpdateTimer.h</itemPath>
@@ -18,7 +16,6 @@
       <itemPath>BoardFunctions.h</itemPath>
       <itemPath>Buttons.h</itemPath>
       <itemPath>DS3231.h</itemPath>
-      <itemPath>timelib.h</itemPath>
       <itemPath>Program.h</itemPath>
       <itemPath>I2C5_Master.h</itemPath>
       <itemPath>UART1.h</itemPath>
@@ -60,7 +57,7 @@
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
-    <conf name="V3Board" type="2">
+    <conf name="ArenaP32V2Board" type="2">
       <toolsSet>
         <developmentServer>localhost</developmentServer>
         <targetDevice>PIC32MX795F512H</targetDevice>

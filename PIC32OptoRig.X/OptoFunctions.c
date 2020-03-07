@@ -62,13 +62,12 @@ void SetPWM(unsigned int freq,unsigned int dc){
 }
 
 void __ISR(_TIMER_2_VECTOR, IPL3SOFT) Timer2Handler(void) {
-    PORTEINV = 0x0002;    
+    //PORTEINV = 0x0002;    
     mT2ClearIntFlag();
-
 }
 
 void __ISR(_OUTPUT_COMPARE_1_VECTOR, IPL4SOFT) OC1Handler(void) {
-    PORTEINV = 0x0001;
+    //PORTEINV = 0x0001;
     mOC1ClearIntFlag();
 }
 

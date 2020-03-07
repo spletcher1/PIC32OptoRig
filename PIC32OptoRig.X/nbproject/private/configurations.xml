@@ -3,7 +3,7 @@
   <projectmakefile>Makefile</projectmakefile>
   <defaultConf>0</defaultConf>
   <confs>
-    <conf name="V3Board" type="2">
+    <conf name="ArenaP32V2Board" type="2">
       <platformToolSN></platformToolSN>
       <languageToolchainDir>C:\Program Files (x86)\Microchip\xc32\v2.15\bin</languageToolchainDir>
       <mdbdebugger version="1">

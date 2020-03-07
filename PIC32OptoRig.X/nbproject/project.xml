@@ -19,7 +19,7 @@
             </sourceRootList>
             <confList>
                 <confElem>
-                    <name>V3Board</name>
+                    <name>ArenaP32V2Board</name>
                     <type>2</type>
                 </confElem>
             </confList>

@@ -27,11 +27,11 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 PROJECTNAME=PIC32OptoRig.X
 
 # Active Configuration
-DEFAULTCONF=V3Board
+DEFAULTCONF=ArenaP32V2Board
 CONF=${DEFAULTCONF}
 
 # All Configurations
-ALLCONFS=V3Board 
+ALLCONFS=ArenaP32V2Board 
 
 
 # build
@@ -45,13 +45,13 @@ ALLCONFS=V3Board
 
 # clobber
 .clobber-impl: .clobber-pre .depcheck-impl
-	    ${MAKE} SUBPROJECTS=${SUBPROJECTS} CONF=V3Board clean
+	    ${MAKE} SUBPROJECTS=${SUBPROJECTS} CONF=ArenaP32V2Board clean
 
 
 
 # all
 .all-impl: .all-pre .depcheck-impl
-	    ${MAKE} SUBPROJECTS=${SUBPROJECTS} CONF=V3Board build
+	    ${MAKE} SUBPROJECTS=${SUBPROJECTS} CONF=ArenaP32V2Board build
 
 
 
