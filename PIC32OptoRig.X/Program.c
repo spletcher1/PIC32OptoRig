@@ -51,13 +51,16 @@ void UpdateProgram(){
   theProgram.totalProgramDuration = elapsedSec;
 }
 
-void AddProgramStep(unsigned int islighton, unsigned int freq, unsigned int dc, unsigned char trigger, unsigned long int duration){
+void AddProgramStep(unsigned char led1val, unsigned char led2val, unsigned char led3val, unsigned char led4val, unsigned int freq, unsigned int dc, unsigned char trigger, unsigned long int duration){
   if(theProgram.NumSteps>=MAXPROGRAMSTEPS) {
     ErrorsRegister.bits.TooManyStepsError=1;
     return;
   }
   theProgram.Steps[theProgram.NumSteps].StepNumber=theProgram.NumSteps+1;
-  theProgram.Steps[theProgram.NumSteps].IsLightOn=islighton;
+  theProgram.Steps[theProgram.NumSteps].LED1Threshold=led1val;
+  theProgram.Steps[theProgram.NumSteps].LED2Threshold=led2val;
+  theProgram.Steps[theProgram.NumSteps].LED3Threshold=led3val;
+  theProgram.Steps[theProgram.NumSteps].LED4Threshold=led4val;
   theProgram.Steps[theProgram.NumSteps].Frequency=freq;
   theProgram.Steps[theProgram.NumSteps].DutyCycle=dc;
   theProgram.Steps[theProgram.NumSteps].ActiveTriggers=trigger;
@@ -68,8 +71,8 @@ void AddProgramStep(unsigned int islighton, unsigned int freq, unsigned int dc, 
 void ConfigureSimpleProgram(unsigned long int secondsOn, unsigned long int secondsOff){
   ClearProgram();
   theProgram.programType = LOOPING;
-  AddProgramStep(1,40,50,0,secondsOn);
-  AddProgramStep(0,40,50,0,secondsOff);
+  AddProgramStep(1,1,1,1,40,32,0,secondsOn);
+  AddProgramStep(0,0,0,0,40,32,0,secondsOff);
   theProgram.startTime.seconds = 0;
   theProgram.startTime.minutes = 0;
   theProgram.startTime.hours =  0;
@@ -113,6 +116,15 @@ void StopProgram(){
   SetOptoState(0x00);
 }
 
+void PushCurrentLEDThresholds(){
+    unsigned int thresh[4];
+    thresh[0]=theProgram.Steps[theProgram.CurrentStep].LED1Threshold;
+    thresh[1]=theProgram.Steps[theProgram.CurrentStep].LED2Threshold;
+    thresh[2]=theProgram.Steps[theProgram.CurrentStep].LED3Threshold;
+    thresh[3]=theProgram.Steps[theProgram.CurrentStep].LED4Threshold;
+    SetLEDThresholds(thresh);
+}
+
 void StartProgram() {
   if(theProgram.programStatus != STAGED) return;
   
@@ -128,12 +140,8 @@ void StartProgram() {
   }
   // Need to set the first program step going.
   SetOptoParameters(theProgram.Steps[theProgram.CurrentStep].Frequency, theProgram.Steps[theProgram.CurrentStep].DutyCycle);
-  if (theProgram.Steps[theProgram.CurrentStep].IsLightOn == 0) {
-    SetOptoState(0x00);
-  }
-  else {
-    SetOptoState(0x0F);
-  }
+  PushCurrentLEDThresholds();
+  
   validationCounter = 0;
   theProgram.programStatus = RUNNING;
 }
@@ -206,19 +214,14 @@ void ProcessProgramValidationStep(){
     return;
   }
   SetOptoParameters(theProgram.Steps[theProgram.CurrentStep].Frequency, theProgram.Steps[theProgram.CurrentStep].DutyCycle);
-  if (theProgram.Steps[theProgram.CurrentStep].IsLightOn == 0) {
-    SetOptoState(0x00);
-  }
-  else {
-    SetOptoState(0x0F);
-  }
+  PushCurrentLEDThresholds();
 }
 
 // With the inclusion of an external trigger(s) on sensor ports 1 and 2
 // this function is called every 1ms and will revert to 1sec if normal program
 // is used.
 void ProcessProgramStep(){
-  unsigned char ison=0;
+  //unsigned char ison=0;
   milliSecondCounter++;
   // This function will assume the current program counters are correct.
   // If the above is true, then the type of program doesn't matter.
@@ -254,27 +257,23 @@ void ProcessProgramStep(){
         }
       }
       SetOptoParameters(theProgram.Steps[theProgram.CurrentStep].Frequency,theProgram.Steps[theProgram.CurrentStep].DutyCycle);
-      if(theProgram.Steps[theProgram.CurrentStep].IsLightOn==0) {
-        SetOptoState(0x00);
-      }
-      else {
-        SetOptoState(0x0F);
-      }
+      PushCurrentLEDThresholds();
     }
   }
 
   // This is at the end to override things that come previously
-  if(theProgram.Steps[theProgram.CurrentStep].ActiveTriggers >0){
-    if(theProgram.Steps[theProgram.CurrentStep].ActiveTriggers & 0x01)
-      if(TRIGGER_PORT==1)
-        ison=1;
-    if(SUPRESSOR_PORT==1)
-      ison=0;
-    if(ison)
-      SetOptoState(0x0F);
-    else
-      SetOptoState(0x00);
-  }
+  // TODO: This needs to be fixed.
+  //if(theProgram.Steps[theProgram.CurrentStep].ActiveTriggers >0){
+  //  if(theProgram.Steps[theProgram.CurrentStep].ActiveTriggers & 0x01)
+  //    if(TRIGGER_PORT==1)
+  //      ison=1;
+  //  if(SUPRESSOR_PORT==1)
+  //    ison=0;
+  //  if(ison)
+  //    SetOptoState(0x0F);
+  //  else
+  //    SetOptoState(0x00);
+  //}
 }
 
 void SendProgramData(){
@@ -294,7 +293,10 @@ void SendProgramData(){
   }
   else {
     for(i=0;i<theProgram.NumSteps;i++){
-      barray[bindex++]=(unsigned char)(theProgram.Steps[i].IsLightOn);
+      barray[bindex++]=(unsigned char)(theProgram.Steps[i].LED1Threshold);
+      barray[bindex++]=(unsigned char)(theProgram.Steps[i].LED2Threshold);
+      barray[bindex++]=(unsigned char)(theProgram.Steps[i].LED3Threshold);
+      barray[bindex++]=(unsigned char)(theProgram.Steps[i].LED4Threshold);
       barray[bindex++]=(unsigned char)(theProgram.Steps[i].Frequency>>8);
       barray[bindex++]=(unsigned char)(theProgram.Steps[i].Frequency);
       barray[bindex++]=(unsigned char)(theProgram.Steps[i].DutyCycle>>8);
@@ -400,7 +402,7 @@ void SendProgramStatus(){
 
 void LoadProgramFromUART(unsigned char* buffer, unsigned int len){
   unsigned char nSteps,i;
-  unsigned int lights,freq,dc,pindex;
+  unsigned int led1,led2,led3,led4,freq,dc,pindex;
   unsigned long int dur;
   unsigned char triggers;
 
@@ -429,14 +431,17 @@ void LoadProgramFromUART(unsigned char* buffer, unsigned int len){
   nSteps = (int)((len-9)/10);
   pindex = 9;
   for(i=0;i<nSteps;i++){
-    lights = buffer[pindex];
-    freq = (unsigned int)(buffer[pindex+1]<<8) + (unsigned int)(buffer[pindex+2]); 
-    dc = (unsigned int)(buffer[pindex+3]<<8) + (unsigned int)(buffer[pindex+4]);
-    triggers = buffer[pindex+5];
-    dur = (unsigned int)(buffer[pindex+6]<<24) + (unsigned int)(buffer[pindex+7]<<16)+
-          (unsigned int)(buffer[pindex+8]<<8) + (unsigned int)(buffer[pindex+9]);
-    AddProgramStep(lights, freq,  dc, triggers, dur);
-    pindex+=10;
+    led1 = buffer[pindex];
+    led2 = buffer[pindex+1];
+    led3 = buffer[pindex+2];
+    led4 = buffer[pindex+3];
+    freq = (unsigned int)(buffer[pindex+4]<<8) + (unsigned int)(buffer[pindex+5]); 
+    dc = (unsigned int)(buffer[pindex+6]<<8) + (unsigned int)(buffer[pindex+7]);
+    triggers = buffer[pindex+8];
+    dur = (unsigned int)(buffer[pindex+9]<<24) + (unsigned int)(buffer[pindex+10]<<16)+
+          (unsigned int)(buffer[pindex+11]<<8) + (unsigned int)(buffer[pindex+12]);
+    AddProgramStep(led1,led2,led3,led4, freq,  dc, triggers, dur);
+    pindex+=13;
   }
   UpdateProgram();
   theProgram.programStatus=LOADED;

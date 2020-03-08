@@ -12,7 +12,7 @@ void SendProgramStatus();
 void ClearProgram();
 void CheckProgramForStart();
 void LoadProgram();
-void AddProgramStep(unsigned int islighton, unsigned int freq, unsigned int dc,unsigned char triggers, unsigned long int duration);
+void AddProgramStep(unsigned char led1val, unsigned char led2val, unsigned char led3val, unsigned char led4val, unsigned int freq, unsigned int dc,unsigned char triggers, unsigned long int duration);
 void LoadProgramFromUART(unsigned char* buffer, unsigned int len);
 void AddStepsFromUART(unsigned char* buffer, unsigned int len);
 void UpdateProgram(void);
@@ -36,7 +36,10 @@ typedef enum
 
 struct ProgramStep {
   unsigned int StepNumber;
-  unsigned int IsLightOn;
+  unsigned char LED1Threshold;
+  unsigned char LED2Threshold;
+  unsigned char LED3Threshold;
+  unsigned char LED4Threshold;
   unsigned int Frequency;
   unsigned int DutyCycle;
   unsigned char ActiveTriggers;

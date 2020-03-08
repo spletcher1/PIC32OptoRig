@@ -38,7 +38,13 @@ void SaveProgram_24LC256(){
   
   counter=10;
   for(i=0;i<theProgram.NumSteps;i++){
-    lights=theProgram.Steps[i].IsLightOn;
+    lights=theProgram.Steps[i].LED1Threshold;
+    WriteByte_24LC256(counter++,lights);
+    lights=theProgram.Steps[i].LED2Threshold;
+    WriteByte_24LC256(counter++,lights);
+    lights=theProgram.Steps[i].LED3Threshold;
+    WriteByte_24LC256(counter++,lights);
+    lights=theProgram.Steps[i].LED4Threshold;
     WriteByte_24LC256(counter++,lights);
     a = theProgram.Steps[i].Frequency>>8;
     a = a & 0x00FF;
@@ -68,7 +74,7 @@ void SaveProgram_24LC256(){
 
 void LoadProgram_24LC256(){
   unsigned int i, counter;
-  unsigned char lights,a,b,c,d,steps,tmp,triggers;
+  unsigned char led1,led2,led3,led4,a,b,c,d,steps,tmp,triggers;
   unsigned int freq,pw;
   unsigned long int duration;
   ClearProgram();
@@ -93,7 +99,10 @@ void LoadProgram_24LC256(){
   
   counter=10;
   for(i=0;i<steps;i++){
-    ReadByte_24LC256(counter++,&lights);
+    ReadByte_24LC256(counter++,&led1);
+    ReadByte_24LC256(counter++,&led2);
+    ReadByte_24LC256(counter++,&led3);
+    ReadByte_24LC256(counter++,&led4);
     ReadByte_24LC256(counter++,&a);
     ReadByte_24LC256(counter++,&b);
     freq=(a<<8)+b;
@@ -106,7 +115,7 @@ void LoadProgram_24LC256(){
     ReadByte_24LC256(counter++,&c);
     ReadByte_24LC256(counter++,&d);
     duration = (a << 24) + (b << 16) + (c << 8) + d;
-    AddProgramStep(lights,freq,pw,triggers,duration);
+    AddProgramStep(led1,led2,led3,led4,freq,pw,triggers,duration);
   }
   UpdateProgram();
   theProgram.programStatus = LOADED;

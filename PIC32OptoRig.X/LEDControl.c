@@ -11,6 +11,7 @@ unsigned int LEDDelayValues[NUMLEDS];
 unsigned int LEDMaxTimeOnValues[NUMLEDS];
 
 LEDFLAGS IsLEDOn;
+LEDFLAGS IsLEDConstant;
 LEDFLAGS LEDLinkFlags[NUMLEDS];
 unsigned char IsOverMaxTimeOn[NUMLEDS];
 
@@ -52,7 +53,10 @@ void SetLEDLinkFlags(unsigned char *linkdefs){
 void InitializeLEDControl(unsigned int decayval,unsigned int delayval,unsigned int maxtimeval) {    
     int i; 
     for(i=0;i<NUMLEDS;i++)
-        LEDThresholdValues[i]=-1;       
+        LEDThresholdValues[i]=-1;   
+   
+    IsLEDConstant.ledField=0x00;
+        
     ClearLEDLinkFlags();    
     SetLEDParams(decayval,delayval,maxtimeval);
 }
@@ -69,10 +73,25 @@ void TestLEDThresholds(){
         LEDThresholdValues[i]=100*128;
 }
 
+// For the PIC32 Arena Board V2, we will define three threshold values.
+// 0 = LED Off
+// 1= LED On and Pulsed
+// 2 = LED on and Constant
+
+
 void SetLEDThresholds(int *thresh){
     int i;
-    for(i=0;i<NUMLEDS;i++)
-        LEDThresholdValues[i]=thresh[i]*128;
+    IsLEDConstant.ledField=0x00;
+    for(i=0;i<NUMLEDS;i++){
+        if(thresh[i]==0)
+            LEDThresholdValues[i]=-1;
+        else if(thresh[i]=1)
+            LEDThresholdValues[i]=0;
+        else if(thresh[i]=2){
+            LEDThresholdValues[i]=0;
+            IsLEDConstant.ledField |= (1<<i);
+        }
+    }
 }
 
 void inline SetLEDOn(unsigned char led){    
@@ -237,15 +256,6 @@ void SetMaxTimeOn(unsigned int maxTime){
     SetLEDParams(currentDecay,currentDelay,maxTime);
 }
 
-
-void SetCurrentOptoState() {
-    int OptoState;
-    OptoState=IsLEDOn.ledField & 0x0F;
-    SetOptoState(OptoState);
-}
-
-
-
 void StepLEDControl() {
     unsigned char i;
     // We now start by assuming everyone is off.
@@ -254,5 +264,5 @@ void StepLEDControl() {
         // LED Update only sets those as on.
         LEDUpdateFunction(i);        
     }
-    SetCurrentOptoState();
+    SetOptoState(IsLEDOn.ledField & 0x0F);    
 }

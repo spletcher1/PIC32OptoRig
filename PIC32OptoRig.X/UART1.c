@@ -9,7 +9,7 @@
 //UART2B = UART6
 //UART3B = UART5
 
-#define COMMANDBUFFERSIZE (MAXPROGRAMSTEPS*9)+10
+#define COMMANDBUFFERSIZE (MAXPROGRAMSTEPS*13)+10
 
 unsigned char commandBuffer[COMMANDBUFFERSIZE];
 unsigned char cobsBuffer[COMMANDBUFFERSIZE+5];
@@ -184,7 +184,7 @@ void ProcessCommandBuffer() {
       packetSize=0;
       return; // Ignore commands for other controllers.
      }
-    /*
+    
     if(commandBuffer[1]==programRequestChar) {
       SendProgramData();
     }
@@ -222,14 +222,14 @@ void ProcessCommandBuffer() {
       SendAcknowledgement();
     }
     else if(commandBuffer[1]==resetErrorCodesChar) {
-      ErrorsRegister=0;
+      ErrorsRegister.byte=0;
       SendAcknowledgement();
     }
     else if(commandBuffer[1]==sendErrorCodesChar) {
       SendAcknowledgement();
     }
     else {
-      CommandNotFoundError=1;
+      ErrorsRegister.bits.CommandNotFoundError=1;
       SendAcknowledgement();
     }
   }
@@ -254,10 +254,10 @@ void ProcessCommandBuffer() {
       SendAcknowledgement();
     }
   }
-  */
+  
   packetSize=0; // Clear the command buffer. 
 }
-}
+
 
 unsigned int encodeCOBS(unsigned char* buffer,unsigned int bytesToEncode, unsigned char* encodedBuffer)
     {

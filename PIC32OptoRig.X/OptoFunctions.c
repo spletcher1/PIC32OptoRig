@@ -8,7 +8,7 @@ int volatile optoOffThreshold;
 unsigned char volatile OptoState;
 unsigned char volatile isOptoOn;
 
-LEDFLAGS IsLEDConstant;
+extern LEDFLAGS IsLEDConstant;
 
 #define PRESCALE               64
 #define TOGGLES_PER_SEC        1000

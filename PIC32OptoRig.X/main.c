@@ -34,6 +34,7 @@ void InitApp(void) {
     DelayMs(1000);
 
     ConfigureOpto();
+    InitializeLEDControl(0,0,0);
     ConfigureUpdateTimer();
     ErrorsRegister.byte = 0;
 
