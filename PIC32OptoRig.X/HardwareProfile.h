@@ -14,7 +14,7 @@
 #include <p32xxxx.h>
 
 #define controllerID 0x01
-#define CURRENTVERSION "2.5.0"
+#define CURRENTVERSION "3.0.0 Pro"
 #define MAXPROGRAMSTEPS 100
 
 #define NUMLEDS  4

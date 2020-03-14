@@ -2,7 +2,7 @@
 
 #define VALIDATIONSECONDS 30
 
-#define BUFFERSIZES (MAXPROGRAMSTEPS*10)+5
+#define BUFFERSIZES (MAXPROGRAMSTEPS*13)+5
 
 struct FullProgram theProgram;
 extern unsigned char cobsBuffer[BUFFERSIZES];
@@ -111,9 +111,15 @@ void ValidateProgramTime() {
   }
 }
 
+void TurnLEDOff(){
+  unsigned int thresh[NUMLEDS];
+  thresh[0]=thresh[1]=thresh[2]=thresh[3]=0;
+  SetLEDThresholds(thresh);
+}
+
 void StopProgram(){
   theProgram.programStatus = LOADED;
-  SetOptoState(0x00);
+  TurnLEDOff();
 }
 
 void PushCurrentLEDThresholds(){
@@ -183,7 +189,7 @@ void StageProgram(){
   // recaculate all elapsed times so i didn't call UpdateProgram() again.
   theProgram.startEpochTime = time_date_to_epoch(&theProgram.startTime);
   theProgram.programStatus = STAGED;
-  SetOptoState(0x00);
+  TurnLEDOff();
 }
 
 void ClearProgram(){
@@ -280,6 +286,9 @@ void SendProgramData(){
   unsigned int i,bindex=0;
   barray[bindex++]=0xFE; //Address packet to UART Master
   if(theProgram.NumSteps==0){
+     barray[bindex++]=(unsigned char)(1);
+     barray[bindex++]=(unsigned char)(1);
+     barray[bindex++]=(unsigned char)(1);
      barray[bindex++]=(unsigned char)(1);
      barray[bindex++]=(unsigned char)(1);
      barray[bindex++]=(unsigned char)(1);
@@ -406,7 +415,7 @@ void LoadProgramFromUART(unsigned char* buffer, unsigned int len){
   unsigned long int dur;
   unsigned char triggers;
 
-  if(((len-9) % 10) != 0) // Nine bytes before steps, which are each 10.
+  if(((len-9) % 13) != 0) // Nine bytes before steps, which are each 10.
     return;
 
   ClearProgram();
@@ -428,7 +437,7 @@ void LoadProgramFromUART(unsigned char* buffer, unsigned int len){
   theProgram.startTime.minutes=buffer[7];
   theProgram.startTime.seconds=buffer[8];
 
-  nSteps = (int)((len-9)/10);
+  nSteps = (int)((len-9)/13);
   pindex = 9;
   for(i=0;i<nSteps;i++){
     led1 = buffer[pindex];

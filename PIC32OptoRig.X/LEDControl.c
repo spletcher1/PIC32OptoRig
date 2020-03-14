@@ -85,9 +85,9 @@ void SetLEDThresholds(int *thresh){
     for(i=0;i<NUMLEDS;i++){
         if(thresh[i]==0)
             LEDThresholdValues[i]=-1;
-        else if(thresh[i]=1)
+        else if(thresh[i]==1)
             LEDThresholdValues[i]=0;
-        else if(thresh[i]=2){
+        else if(thresh[i]==2){
             LEDThresholdValues[i]=0;
             IsLEDConstant.ledField |= (1<<i);
         }
