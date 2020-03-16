@@ -7,6 +7,8 @@ unsigned char signalButton2Pressed;
 
 extern unsigned long volatile halfSecondCounter;
 
+extern struct FullProgram theProgram;
+
 void ConfigureButtons() {
     USERBUTTON1_TRIS = 0x01;
     USERBUTTON2_TRIS = 0x01;
@@ -45,6 +47,10 @@ void ProcessButtonStep() {
 }
 
 void ProcessButton1Press() {
+  if(theProgram.programStatus == RUNNING)
+    StopProgram();
+  else
+    StageProgram();
    signalButton1Pressed=0;        
 }
 
