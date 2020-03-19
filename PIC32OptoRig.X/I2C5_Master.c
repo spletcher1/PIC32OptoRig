@@ -73,72 +73,41 @@ void __ISR(_I2C_5_VECTOR, IPL5AUTO) I2C5InterruptServiceRoutine(void) {
     INTClearFlag(INT_I2C5M);
 }
 
-I2C_RESULT Read8FromI2C5(unsigned char slaveaddress, unsigned char dataaddress, unsigned char *data) {
-    while (!I2CBusIsIdle(I2C5));
-    // Now begin the send sequence
-    I2CStart(I2C5); // Send the start bit.
-    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
-    while (!I2CBusIsIdle(I2C5));
- 
-    // Send the slave address and memory start address	
-    I2CSendByte(I2C5, slaveaddress);    
-    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
-    while (!I2CBusIsIdle(I2C5));
-    if (I2C5STATbits.ACKSTAT) return I2C_ERROR; // Make sure it is acked.	
-
-    I2CSendByte(I2C5, dataaddress);
-    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
-    while (!I2CBusIsIdle(I2C5));
-    if (I2C5STATbits.ACKSTAT) return I2C_ERROR;
-
-
-    I2CRepeatStart(I2C5); // Send restart.
-    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
-    while (!I2CBusIsIdle(I2C5));
-
-    I2CSendByte(I2C5,slaveaddress | 0x01); // Send slave address but last bit changed to 1 to indicate a read.
-    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
-    while (!I2CBusIsIdle(I2C5));
-    if (I2C5STATbits.ACKSTAT) return I2C_ERROR;
-
-    while(!I2CReceivedDataIsAvailable(I2C5)); 
-    *data = I2CGetByte(I2C5);
-    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
-    while (!I2CBusIsIdle(I2C5));
-    I2CAcknowledgeByte(I2C5, FALSE);	
-
-    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
-    while (!I2CBusIsIdle(I2C5));
-    I2CStop(I2C5);
-    return I2C_SUCCESS;
+void IdleI2C5(void)
+{
+    /* Wait until I2C Bus is Inactive */
+    while(I2C5CONbits.SEN || I2C5CONbits.PEN || I2C5CONbits.RSEN || I2C5CONbits.RCEN || I2C5CONbits.ACKEN || I2C5STATbits.TRSTAT);
+}
+unsigned char MasterReadI2C5(void)
+{
+    I2C5CONbits.RCEN = 1;
+    while(I2C5CONbits.RCEN);
+    I2C5STATbits.I2COV = 0;
+    return(I2C5RCV);
 }
 
-I2C_RESULT WriteByte_24LC256(unsigned int address, unsigned char wData) {
-    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
-    while (!I2CBusIsIdle(I2C5));
+I2C_RESULT WriteByte_24LC256(unsigned int address, unsigned char wData, unsigned char delay) {
+    if(delay)
+        DelayMs(5);
+    IdleI2C5();
     // Begin the send sequence
-    I2CStart(I2C5); // Send the start bit.
-    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
-    while (!I2CBusIsIdle(I2C5));
+    I2CStart(I2C5); // Send the start bit.   
+    IdleI2C5();
 
-    I2CSendByte(I2C5, WRITEADDRESS_24LC256);
-    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
-    while (!I2CBusIsIdle(I2C5));
+    I2CSendByte(I2C5, WRITEADDRESS_24LC256);    
+    IdleI2C5();
     if (I2C5STATbits.ACKSTAT) return I2C_ERROR; // If this bit is 1, then slave failed to ackknowledge, so break.	
 
-    I2CSendByte(I2C5, address >> 8);
-    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
-    while (!I2CBusIsIdle(I2C5));
+    I2CSendByte(I2C5, address >> 8);    
+    IdleI2C5();
     if (I2C5STATbits.ACKSTAT) return I2C_ERROR; // If this bit is 1, then slave failed to ackknowledge, so break.	
 
-    I2CSendByte(I2C5, address & 0xFF);
-    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
-    while (!I2CBusIsIdle(I2C5));
+    I2CSendByte(I2C5, address & 0xFF);    
+    IdleI2C5();
     if (I2C5STATbits.ACKSTAT) return I2C_ERROR; // If this bit is 1, then slave failed to ackknowledge, so break.	
 
-    I2CSendByte(I2C5, wData);
-    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
-    while (!I2CBusIsIdle(I2C5));
+    I2CSendByte(I2C5, wData);    
+    IdleI2C5();
     if (I2C5STATbits.ACKSTAT) return I2C_ERROR; // If this bit is 1, then slave failed to ackknowledge, so break.	
 
     I2CStop(I2C5); // Send the stop condition.		
@@ -148,46 +117,36 @@ I2C_RESULT WriteByte_24LC256(unsigned int address, unsigned char wData) {
 //--------------- Reads data from 24C02 EEPROM - single location (random)
 
 I2C_RESULT ReadByte_24LC256(unsigned int address, unsigned char *data) {
-    while (!I2CBusIsIdle(I2C5));
+    IdleI2C5();
     // Now begin the send sequence
-    I2CStart(I2C5); // Send the start bit.
-    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
-    while (!I2CBusIsIdle(I2C5));
+    I2CStart(I2C5); // Send the start bit.  
+    IdleI2C5();
 
     // Send the slave address and memory start address	
-    I2CSendByte(I2C5, WRITEADDRESS_24LC256);
-    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
-    while (!I2CBusIsIdle(I2C5));
+    I2CSendByte(I2C5, WRITEADDRESS_24LC256);    
+    IdleI2C5();
     if (I2C5STATbits.ACKSTAT) return I2C_ERROR; // Make sure it is acked.	
 
-    I2CSendByte(I2C5, address >> 8);
-    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
-    while (!I2CBusIsIdle(I2C5));
+    I2CSendByte(I2C5, address >> 8);    
+    IdleI2C5();
     if (I2C5STATbits.ACKSTAT) return I2C_ERROR;
 
-    I2CSendByte(I2C5, address & 0xFF);
-    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
-    while (!I2CBusIsIdle(I2C5));
+    I2CSendByte(I2C5, address & 0xFF);    
+    IdleI2C5();
     if (I2C5STATbits.ACKSTAT) return I2C_ERROR;
 
-    I2CRepeatStart(I2C5);
-    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
-    while (!I2CBusIsIdle(I2C5));
+    I2CRepeatStart(I2C5);    
+    IdleI2C5();
 
-    I2CSendByte(I2C5, READADDRESS_24LC256); // Send slave address but last bit changed to 1 to indicate a read.
-    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
-    while (!I2CBusIsIdle(I2C5));
+    I2CSendByte(I2C5, READADDRESS_24LC256); // Send slave address but last bit changed to 1 to indicate a read.    
+    IdleI2C5();
     if (I2C5STATbits.ACKSTAT) return I2C_ERROR;
     
-    while(!I2CReceivedDataIsAvailable(I2C5)); 
-    *data = I2CGetByte(I2C5);
-
-    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
-    while (!I2CBusIsIdle(I2C5));
+    //while(!I2CReceivedDataIsAvailable(I2C5)); 
+    *data = MasterReadI2C5(); 
     I2CAcknowledgeByte(I2C5, FALSE);
-
-    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
-    while (!I2CBusIsIdle(I2C5));
+    IdleI2C5();
+   
     I2CStop(I2C5);
     return I2C_SUCCESS;
 }
@@ -201,57 +160,46 @@ I2C_RESULT WriteTimeToRTC(rtc_time_t *sTime) {
     unsigned short month = Dec2Bcd(sTime->month);
     unsigned short year = Dec2Bcd(sTime->year);
     // end conversion
-
-    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
-    while (!I2CBusIsIdle(I2C5));
+   
+    IdleI2C5();
     // Begin the send sequence
     I2CStart(I2C5); // Send the start bit.
-    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
-    while (!I2CBusIsIdle(I2C5));
+    IdleI2C5();
 
-    I2CSendByte(I2C5, WRITEADDRESS_DS3231);
-    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
-    while (!I2CBusIsIdle(I2C5));
+    I2CSendByte(I2C5, WRITEADDRESS_DS3231);    
+    IdleI2C5();
     if (I2C5STATbits.ACKSTAT) return I2C_ERROR; // If this bit is 1, then slave failed to ackknowledge, so break.	
 
-    I2CSendByte(I2C5, 0);
-    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
-    while (!I2CBusIsIdle(I2C5));
+    I2CSendByte(I2C5, 0);    
+    IdleI2C5();
     if (I2C5STATbits.ACKSTAT) return I2C_ERROR; // If this bit is 1, then slave failed to ackknowledge, so break.	
 
-    I2CSendByte(I2C5, second);
-    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
-    while (!I2CBusIsIdle(I2C5));
+    I2CSendByte(I2C5, second);   
+    IdleI2C5();
     if (I2C5STATbits.ACKSTAT) return I2C_ERROR; // If this bit is 1, then slave failed to ackknowledge, so break.	
 
-    I2CSendByte(I2C5, minute);
-    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
-    while (!I2CBusIsIdle(I2C5));
+    I2CSendByte(I2C5, minute);    
+    IdleI2C5();
     if (I2C5STATbits.ACKSTAT) return I2C_ERROR; // If this bit is 1, then slave failed to ackknowledge, so break.	
 
-    I2CSendByte(I2C5, hour);
-    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
-    while (!I2CBusIsIdle(I2C5));
+    I2CSendByte(I2C5, hour);    
+    IdleI2C5();
     if (I2C5STATbits.ACKSTAT) return I2C_ERROR; // If this bit is 1, then slave failed to ackknowledge, so break.	
 
-    I2CSendByte(I2C5, 1);
-    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
-    while (!I2CBusIsIdle(I2C5));
+    I2CSendByte(I2C5, 1);    
+    IdleI2C5();
     if (I2C5STATbits.ACKSTAT) return I2C_ERROR; // If this bit is 1, then slave failed to ackknowledge, so break.	
 
-    I2CSendByte(I2C5, m_day);
-    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
-   while (!I2CBusIsIdle(I2C5));
+    I2CSendByte(I2C5, m_day);    
+    IdleI2C5();
     if (I2C5STATbits.ACKSTAT) return I2C_ERROR; // If this bit is 1, then slave failed to ackknowledge, so break.	
 
-    I2CSendByte(I2C5, month);
-    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
-    while (!I2CBusIsIdle(I2C5));
+    I2CSendByte(I2C5, month);    
+    IdleI2C5();
     if (I2C5STATbits.ACKSTAT) return I2C_ERROR; // If this bit is 1, then slave failed to ackknowledge, so break.	
 
-    I2CSendByte(I2C5, year);
-    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
-    while (!I2CBusIsIdle(I2C5));
+    I2CSendByte(I2C5, year);    
+    IdleI2C5();
     if (I2C5STATbits.ACKSTAT) return I2C_ERROR; // If this bit is 1, then slave failed to ackknowledge, so break.	
 
     I2CStop(I2C5); // Send the stop condition.		
@@ -259,81 +207,75 @@ I2C_RESULT WriteTimeToRTC(rtc_time_t *sTime) {
     return I2C_SUCCESS;
 }
 
+//I2CBusIsIdle
+//return ( (i2cRegisters->I2CxSTATbits.S == 0 && i2cRegisters->I2CxSTATbits.P == 0 ) ||
+//             (i2cRegisters->I2CxSTATbits.S == 0 && i2cRegisters->I2CxSTATbits.P == 1 )   );
+
+
+
+
+
 I2C_RESULT ReadTimeFromRTC(rtc_time_t *ts) {
-    unsigned short seconds, minute, hour, m_day, month, year, tmp;
+    unsigned char seconds, minute, hour, m_day, month, year, tmp;
 
     while (!I2CBusIsIdle(I2C5));
     // Now begin the send sequence
-    I2CStart(I2C5); // Send the start bit.
-    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
-    while (!I2CBusIsIdle(I2C5));
+    I2CStart(I2C5); // Send the start bit.    
+    IdleI2C5();
 
     // Send the slave address and memory start address	
-    I2CSendByte(I2C5, WRITEADDRESS_DS3231);
-    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
-    while (!I2CBusIsIdle(I2C5));
+    I2CSendByte(I2C5, WRITEADDRESS_DS3231);    
+    IdleI2C5();
     if (I2C5STATbits.ACKSTAT) return I2C_ERROR; // Make sure it is acked.	
 
-    I2CSendByte(I2C5, 0);
-    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
-    while (!I2CBusIsIdle(I2C5));
+    I2CSendByte(I2C5, 0);    
+    IdleI2C5();
     if (I2C5STATbits.ACKSTAT) return I2C_ERROR;
 
-    I2CRepeatStart(I2C5);
-    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
-    while (!I2CBusIsIdle(I2C5));
+    I2CRepeatStart(I2C5);    
+    IdleI2C5();
 
-    I2CSendByte(I2C5, READADDRESS_DS3231); // Send slave address but last bit changed to 1 to indicate a read.
-    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
-    while (!I2CBusIsIdle(I2C5));
+    I2CSendByte(I2C5, READADDRESS_DS3231); // Send slave address but last bit changed to 1 to indicate a read.    
+    IdleI2C5();
     if (I2C5STATbits.ACKSTAT) return I2C_ERROR;
     
-    while(!I2CReceivedDataIsAvailable(I2C5)); 
-    seconds = I2CGetByte(I2C5);
-    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
-    while (!I2CBusIsIdle(I2C5));
+    //while(!I2CReceivedDataIsAvailable(I2C5)); 
+    seconds = MasterReadI2C5();        
     I2CAcknowledgeByte(I2C5, TRUE);
-   
-    while(!I2CReceivedDataIsAvailable(I2C5)); 
-    minute = I2CGetByte(I2C5);
-    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
-    while (!I2CBusIsIdle(I2C5));
+    IdleI2C5();
+//DelayMs(1);
+    //while(!I2CReceivedDataIsAvailable(I2C5)); 
+    minute = MasterReadI2C5();    
     I2CAcknowledgeByte(I2C5, TRUE);
-
-    while(!I2CReceivedDataIsAvailable(I2C5)); 
-    hour = I2CGetByte(I2C5);    
-    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
-    while (!I2CBusIsIdle(I2C5));
+    IdleI2C5();    
+//DelayMs(1);
+    //while(!I2CReceivedDataIsAvailable(I2C5)); 
+    hour = MasterReadI2C5();        
     I2CAcknowledgeByte(I2C5, TRUE);
-
-    while(!I2CReceivedDataIsAvailable(I2C5)); 
-    tmp = I2CGetByte(I2C5);    
-    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
-    while (!I2CBusIsIdle(I2C5));
+    IdleI2C5();    
+//DelayMs(1);
+    //while(!I2CReceivedDataIsAvailable(I2C5)); 
+    tmp = MasterReadI2C5();            
     I2CAcknowledgeByte(I2C5, TRUE);
-
-    while(!I2CReceivedDataIsAvailable(I2C5)); 
-    m_day = I2CGetByte(I2C5);
-    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
-    while (!I2CBusIsIdle(I2C5));
+    IdleI2C5();
+//DelayMs(1);
+    //while(!I2CReceivedDataIsAvailable(I2C5)); 
+    m_day = MasterReadI2C5();        
     I2CAcknowledgeByte(I2C5, TRUE);
-
-    while(!I2CReceivedDataIsAvailable(I2C5)); 
-    month = I2CGetByte(I2C5);
-    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
-    while (!I2CBusIsIdle(I2C5));
+    IdleI2C5();
+//DelayMs(1);
+    //while(!I2CReceivedDataIsAvailable(I2C5)); 
+    month = MasterReadI2C5();    
     I2CAcknowledgeByte(I2C5, TRUE);
-
-    while(!I2CReceivedDataIsAvailable(I2C5)); 
-    year = I2CGetByte(I2C5);
-    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
-    while (!I2CBusIsIdle(I2C5));
+    IdleI2C5();    
+//DelayMs(1);
+    //while(!I2CReceivedDataIsAvailable(I2C5)); 
+    year = MasterReadI2C5();    
     I2CAcknowledgeByte(I2C5, FALSE);
-
-    if (ErrorsRegister.bits.I2CError == 1) return I2C_ERROR;
-    while (!I2CBusIsIdle(I2C5));
+    IdleI2C5();
+    
+//DelayMs(1);        
     I2CStop(I2C5);
-
     ts->seconds = Bcd2Dec(seconds);
     ts->minutes = Bcd2Dec(minute);
     ts->hours = Bcd2Dec(hour);

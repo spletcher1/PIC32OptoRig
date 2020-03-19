@@ -25,9 +25,10 @@ void ConfigureUpdateTimer(void) {
 void __ISR(_TIMER_1_VECTOR, IPL2SOFT) Timer1Handler(void) {
     hbCounter++;
     // Deal with heartbeat
-    if (hbCounter >= 1000) {
+    if (hbCounter >= 1000) {       
+        FLIP_HEARTBEAT_LED();  
         if (theProgram.programStatus == RUNNING || theProgram.programStatus == STAGED)
-            FLIP_HEARTBEAT_LED();                
+            FLIP_SIGNALLED_LED();                
         if (secondCounter == 1) {
             secondCounter = 0;
             updateTrigger1sec = 1;

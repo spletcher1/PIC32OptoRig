@@ -20,31 +20,30 @@ errorFlags_t ErrorsRegister;
 // use these CurrentValues in the LEDControl.c
 int CurrentValues[NUMLEDS];
 
-void InitApp(void) {
-
+void InitApp(void) {        
     Startup();
-    InitializeBoard();
-    ConfigureUpdateTimer();
-    ConfigureUART1();
+    InitializeBoard();   
+    ConfigureUpdateTimer();        
+    ConfigureUART1();              
     ConfigureButtons();
-    ConfigureI2C5();
-    InitRTC();
+    ConfigureI2C5();    
+    DelayMs(500);
+    InitRTC();    
     ClearProgram();
 
-    DelayMs(1000);
+    DelayMs(500);
 
-    ConfigureOpto();
-   
-    ConfigureUpdateTimer();
+    //ConfigureOpto();
+       
     ErrorsRegister.byte = 0;
 
     if (IsDefaultProgramSaved_24LC256())
-        LoadProgram_24LC256();
+        LoadProgram_24LC256();    
     else
-        ConfigureSimpleProgram(30, 30);
+        ConfigureSimpleProgram(5, 10);
 
-    //ConfigureSimpleProgram(5,10);
-    //SaveProgram_24LC256();
+    //ConfigureSimpleProgram(20,20);
+    //SaveProgram_24LC256();   
 
     // Becareful when setting.  Increase the above delay to 5000ms.
     // I think the controller resets prior to programming and
@@ -58,21 +57,20 @@ void InitApp(void) {
 
 void main(void) {
     InitApp();
-    HB_OFF();
-
-    StageProgram();
+    HB_OFF();             
+    //StageProgram();   
     while (1) {
         if (updateTrigger500us) {
-            StepLEDControl();
+            //StepLEDControl();
             updateTrigger500us = 0;
         }
         if (updateTrigger1ms) {
-            ProcessButtonStep();
+            //ProcessButtonStep();
             ProcessProgramStep();
             updateTrigger1ms = 0;
         }
         if (updateTrigger1sec) {
-            //StepRTC();
+            //StepRTC(); Not currently used.
             updateTrigger1sec = 0;
         }
         if (signalButton1Pressed) {

@@ -129,7 +129,7 @@ void ConfigureUART1(void) {
 // interval. This timing could easily handle even 100 DFM.
 void __ISR(_UART1_VECTOR, IPL5AUTO) UART1Interrupt(void){
 	int error;
-	unsigned char data,tmp;
+	unsigned char data;
 	error = UART1GetErrors();	
 	if (error > 0) {
 		if (error & 0x01) { //Overflow Error
@@ -162,11 +162,11 @@ void __ISR(_UART1_VECTOR, IPL5AUTO) UART1Interrupt(void){
         }
 	}	
     while(DataRdyUART1()) {
-		data=UARTGetDataByte(UART1);  
+		data=UARTGetDataByte(UART1);          
         if(data == endChar)
             packetReceived=1;
         else{
-            commandBuffer[packetSize++] = tmp; // Store your byte in the FIFO !.
+            commandBuffer[packetSize++] = data; // Store your byte in the FIFO !.
             if(packetSize >=(COMMANDBUFFERSIZE-1)) {
                 ErrorsRegister.bits.UARTBufferOverFlowError=1;
                 packetSize=0; // Reset even though it will be chaotic.

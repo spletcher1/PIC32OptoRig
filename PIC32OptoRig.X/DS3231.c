@@ -19,9 +19,14 @@ errorFlags_t ErrorsRegister;
 // Must be called after I2C1Init
 
 void InitRTC() {
+    I2C_RESULT tmp;
     // a 2 here indicates we are running the first check.
     isTimeCallAnswered = 2;
-    ReadTimeFromRTC(&local_time);
+    //SetRTC();
+    //DelayMs(1000);
+    tmp=ReadTimeFromRTC(&local_time);
+    //DelayMs(1000);
+   
     // If isRTCPresent is 0 it indicated a I2C timeout so its not there.
     // This change is probably not needed, but it is included here for clarity.
     if (isTimeCallAnswered == 2)
@@ -80,7 +85,9 @@ void SetRTCFromUART(unsigned char* buffer, unsigned int len) {
         ErrorsRegister.bits.RTCTimeFormatError = 1;
         return;
     }
+   
     WriteTimeToRTC(&setTime);
+    
 }
 
 void SetRTC() {
@@ -90,9 +97,7 @@ void SetRTC() {
     setTime.monthday = 22;
     setTime.month = 11;
     setTime.year = 19;
-
     WriteTimeToRTC(&setTime);
-
     setTime.seconds = 0;
     setTime.minutes = 0;
     setTime.hours = 0;

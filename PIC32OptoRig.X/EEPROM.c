@@ -17,47 +17,47 @@ void SaveProgram_24LC256(){
   unsigned int i, counter;
   unsigned short lights,a,b,c,d,triggers;
   a = theProgram.NumSteps & 0xFF;
-  WriteByte_24LC256(1, 'Y');
-  WriteByte_24LC256(2, a);
+  WriteByte_24LC256(1, 'Y',0);
+  WriteByte_24LC256(2, a,1);
   
   if(theProgram.programType == LINEAR)
-    WriteByte_24LC256(3, 0x01);  
+    WriteByte_24LC256(3, 0x01,1);  
   else if(theProgram.programType == LOOPING)
-    WriteByte_24LC256(3, 0x02);
+    WriteByte_24LC256(3, 0x02,1);
   else if(theProgram.programType == CIRCADIAN)
-    WriteByte_24LC256(3, 0x03);
+    WriteByte_24LC256(3, 0x03,1);
   else
-    WriteByte_24LC256(3, 0x02);
+    WriteByte_24LC256(3, 0x02,1);
     
-  WriteByte_24LC256(4,theProgram.startTime.seconds);
-  WriteByte_24LC256(5,theProgram.startTime.minutes);
-  WriteByte_24LC256(6,theProgram.startTime.hours);
-  WriteByte_24LC256(7,theProgram.startTime.monthday);
-  WriteByte_24LC256(8,theProgram.startTime.month);
-  WriteByte_24LC256(9,theProgram.startTime.year);
+  WriteByte_24LC256(4,theProgram.startTime.seconds,1);
+  WriteByte_24LC256(5,theProgram.startTime.minutes,1);
+  WriteByte_24LC256(6,theProgram.startTime.hours,1);
+  WriteByte_24LC256(7,theProgram.startTime.monthday,1);
+  WriteByte_24LC256(8,theProgram.startTime.month,1);
+  WriteByte_24LC256(9,theProgram.startTime.year,1);
   
   counter=10;
   for(i=0;i<theProgram.NumSteps;i++){
     lights=theProgram.Steps[i].LED1Threshold;
-    WriteByte_24LC256(counter++,lights);
+    WriteByte_24LC256(counter++,lights,1);
     lights=theProgram.Steps[i].LED2Threshold;
-    WriteByte_24LC256(counter++,lights);
+    WriteByte_24LC256(counter++,lights,1);
     lights=theProgram.Steps[i].LED3Threshold;
-    WriteByte_24LC256(counter++,lights);
+    WriteByte_24LC256(counter++,lights,1);
     lights=theProgram.Steps[i].LED4Threshold;
-    WriteByte_24LC256(counter++,lights);
+    WriteByte_24LC256(counter++,lights,1);
     a = theProgram.Steps[i].Frequency>>8;
     a = a & 0x00FF;
     b = theProgram.Steps[i].Frequency & 0x00FF;
-    WriteByte_24LC256(counter++,a);
-    WriteByte_24LC256(counter++,b);
+    WriteByte_24LC256(counter++,a,1);
+    WriteByte_24LC256(counter++,b,1);
     a = theProgram.Steps[i].DutyCycle>>8;
     a = a & 0x00FF;
     b = theProgram.Steps[i].DutyCycle & 0x00FF;
-    WriteByte_24LC256(counter++,a);
-    WriteByte_24LC256(counter++,b);
+    WriteByte_24LC256(counter++,a,1);
+    WriteByte_24LC256(counter++,b,1);
     triggers=theProgram.Steps[i].ActiveTriggers;
-    WriteByte_24LC256(counter++,triggers);
+    WriteByte_24LC256(counter++,triggers,1);
     a = theProgram.Steps[i].DurationSeconds>>24;
     a = a & 0x00FF;
     b = theProgram.Steps[i].DurationSeconds>>16;
@@ -65,10 +65,10 @@ void SaveProgram_24LC256(){
     c = theProgram.Steps[i].DurationSeconds>>8;
     c = c & 0x00FF;
     d = theProgram.Steps[i].DurationSeconds & 0xFF;
-    WriteByte_24LC256(counter++,a);
-    WriteByte_24LC256(counter++,b);
-    WriteByte_24LC256(counter++,c);
-    WriteByte_24LC256(counter++,d);
+    WriteByte_24LC256(counter++,a,1);
+    WriteByte_24LC256(counter++,b,1);
+    WriteByte_24LC256(counter++,c,1);
+    WriteByte_24LC256(counter++,d,1);
   }
 }
 
@@ -128,9 +128,9 @@ void WriteString_24LC256(unsigned int address, char* wData) {
   char i;
   i=0;
   while(wData[i]!=0){
-     WriteByte_24LC256(address++,wData[i++]);
+     WriteByte_24LC256(address++,wData[i++],1);     
   }
-  WriteByte_24LC256(address,0);
+  WriteByte_24LC256(address,0,0);
 }
 
 //---------------Read string from EEPROM
