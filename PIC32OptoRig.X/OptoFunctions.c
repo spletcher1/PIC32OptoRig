@@ -8,9 +8,6 @@ int volatile optoOffThreshold;
 unsigned char volatile OptoState;
 unsigned char volatile isOptoOn;
 
-unsigned int nextPeriod;
-unsigned int nextDC;
-
 extern LEDFLAGS IsLEDConstant;
 
 #define PRESCALE               64
@@ -37,9 +34,6 @@ void ConfigurePWM() {
     PR2=156250;
     OC1R = PR2 >> 1;
     OC1RS = PR2 >> 1;
-
-    nextPeriod = PR2;
-    nextDC=OC1RS;
     
     // PWM mode without fault pin.
     OC1CON = 0x0006;    
@@ -93,9 +87,16 @@ void SetHertz(unsigned int hz) {
     SetOptoParameters(hz, dutyCycle);
 }
 
+// For now, the suppressor will only suppress LED1 and LED2
+// Will assume the IR is controlled independently of Suppressor.
+
+// Also the indicator only cares about LED1 and LED2 (the red ones))
 void inline Opto_On() {
     isOptoOn = 1;
-    LATESET = OptoState & 0x0F;
+    if(SUPRESSOR_PORT)
+        LATESET = OptoState & 0x0C;    
+    else 
+        LATESET = OptoState & 0x0F;
     if (PORTE & 0x03)
         INDICATOR_LAT = 1;
 }
@@ -105,7 +106,10 @@ void inline Opto_Off() {
 
     LATECLR = 0x0F;
     INDICATOR_LAT = 0;
-    LATESET = OptoState & (IsLEDConstant.ledField & 0x0F);
+    if(SUPRESSOR_PORT)
+        LATESET = OptoState & (IsLEDConstant.ledField & 0x0C);        
+    else 
+        LATESET = OptoState & (IsLEDConstant.ledField & 0x0F);
 
     if (PORTE & 0x03)
         INDICATOR_LAT = 1;
@@ -123,7 +127,7 @@ void ConfigureOpto(void) {
     Opto_Off();
 
     ConfigurePWM();
-    InitializeLEDControl(0, 0, 0);
+    InitializeLEDControl (0, 0, 0);
     SetOptoParameters(40, 50);
 }
 
@@ -134,6 +138,8 @@ void GetOptoStatus(unsigned char* status) {
     status[6] = dutyCycle >> 8;
     status[7] = dutyCycle & 0xFF;
 }
+
+
 
 void inline ProcessOptoStep() {  
     if (PWM_PORT == 1)

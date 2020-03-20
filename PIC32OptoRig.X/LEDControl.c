@@ -1,6 +1,4 @@
-
 #include "GlobalIncludes.h"
-
 
 int LEDDecayCounter[NUMLEDS];
 int LEDDelayCounter[NUMLEDS];
@@ -27,6 +25,11 @@ unsigned int currentDecay;
 unsigned int currentMaxTimeOn;
 
 
+void inline SetLEDOn(unsigned char led){    
+    // Set current and linked LEDs here.  
+    IsLEDOn.ledField |= LEDLinkFlags[led].ledField; 
+}
+
 void ClearLEDLinkFlags(){
     int i;
     for(i=0;i<NUMLEDS;i++){
@@ -34,20 +37,18 @@ void ClearLEDLinkFlags(){
     }    
 }
 
-// Link defs will be an array of length 12, one for each LED
-// LEDs with the same number will be linked.  Max number is 12.
-void SetLEDLinkFlags(unsigned char *linkdefs){
-    int i,j;
-    char currentLinkNumber;
-    for(i=0;i<NUMLEDS;i++){
-        currentLinkNumber=linkdefs[i];
-        LEDLinkFlags[i].ledField = 0;
-        for(j=0;j<NUMLEDS;j++){
-            if(linkdefs[j]==currentLinkNumber){
-                LEDLinkFlags[i].ledField |= (1<<j);    
-            }
-        }
+void UpdateLEDSimplest(unsigned char led) {
+    if (LEDThresholdValues[led] == -1) { 
+        return;
+    }  
+    if (LEDThresholdValues[led] == 0) {
+        SetLEDOn(led);
+        return;
     }
+    if (CurrentValues[led] > LEDThresholdValues[led]) {
+        SetLEDOn(led);
+        return;
+    } 
 }
 
 void InitializeLEDControl(unsigned int decayval,unsigned int delayval,unsigned int maxtimeval) {    
@@ -77,8 +78,6 @@ void TestLEDThresholds(){
 // 0 = LED Off
 // 1= LED On and Pulsed
 // 2 = LED on and Constant
-
-
 void SetLEDThresholds(int *thresh){
     int i;
     IsLEDConstant.ledField=0x00;
@@ -94,28 +93,48 @@ void SetLEDThresholds(int *thresh){
     }
 }
 
-void inline SetLEDOn(unsigned char led){    
-    // Set current and linked LEDs here.  
-    IsLEDOn.ledField |= LEDLinkFlags[led].ledField; 
-}
+
 
 //void inline SetLEDOff(unsigned char led){
 //    IsLEDOn.ledField &= ~(1<<led);
 //}
 
-void UpdateLEDSimplest(unsigned char led) {
-    if (LEDThresholdValues[led] == -1) { 
-        return;
-    }  
-    if (LEDThresholdValues[led] == 0) {
-        SetLEDOn(led);
-        return;
+
+
+void StepLEDControl() {
+    unsigned char i; 
+    // We now start by assuming everyone is off.
+    IsLEDOn.ledField=0;
+    for (i = 0; i < NUMLEDS; i++){               
+        // LED Update only sets those as on.
+        LEDUpdateFunction(i);        
     }
-    if (CurrentValues[led] > LEDThresholdValues[led]) {
-        SetLEDOn(led);
-        return;
-    } 
+    SetOptoState(IsLEDOn.ledField & 0x0F);    
 }
+
+
+////////////////////////////////////////////////////
+// NOT CURRENTLY IN USE
+////////////////////////////////////////////////////
+
+
+// Link defs will be an array of length 12, one for each LED
+// LEDs with the same number will be linked.  Max number is 12.
+void SetLEDLinkFlags(unsigned char *linkdefs){
+    int i,j;
+    char currentLinkNumber;
+    for(i=0;i<NUMLEDS;i++){
+        currentLinkNumber=linkdefs[i];
+        LEDLinkFlags[i].ledField = 0;
+        for(j=0;j<NUMLEDS;j++){
+            if(linkdefs[j]==currentLinkNumber){
+                LEDLinkFlags[i].ledField |= (1<<j);    
+            }
+        }
+    }
+}
+
+
 
 void UpdateLEDWithDecay(unsigned char led) {
     if (LEDThresholdValues[led] == -1) {    
@@ -256,13 +275,3 @@ void SetMaxTimeOn(unsigned int maxTime){
     SetLEDParams(currentDecay,currentDelay,maxTime);
 }
 
-void StepLEDControl() {
-    unsigned char i; 
-    // We now start by assuming everyone is off.
-    IsLEDOn.ledField=0;
-    for (i = 0; i < NUMLEDS; i++){               
-        // LED Update only sets those as on.
-        LEDUpdateFunction(i);        
-    }
-    SetOptoState(IsLEDOn.ledField & 0x0F);    
-}
