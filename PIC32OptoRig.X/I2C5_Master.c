@@ -37,7 +37,7 @@ void FreeI2C() {
 
 void ConfigureI2C5(void) {
     int actualClock;
-    INTSetVectorPriority(INT_I2C_5_VECTOR, INT_PRIORITY_LEVEL_5);
+    INTSetVectorPriority(INT_I2C_5_VECTOR, INT_PRIORITY_LEVEL_6);
     //INTEnable(INT_I2C5M, INT_ENABLED); // Master event
     INTEnable(INT_I2C5B, INT_ENABLED); // Bus collision event
     INTClearFlag(INT_I2C5M);
@@ -50,7 +50,7 @@ void ConfigureI2C5(void) {
     I2CEnable(I2C5, TRUE);
 }
 
-void __ISR(_I2C_5_VECTOR, IPL5AUTO) I2C5InterruptServiceRoutine(void) {
+void __ISR(_I2C_5_VECTOR, IPL6AUTO) I2C5InterruptServiceRoutine(void) {
     // check for MASTER and Bus events and respond accordingly
     if (IFS1bits.I2C5SIF == 1) { // Should never be here because we don't operate as slave.
         //if(IsInDarkMode==0)

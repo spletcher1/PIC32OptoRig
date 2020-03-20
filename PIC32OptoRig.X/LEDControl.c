@@ -257,7 +257,7 @@ void SetMaxTimeOn(unsigned int maxTime){
 }
 
 void StepLEDControl() {
-    unsigned char i;
+    unsigned char i; 
     // We now start by assuming everyone is off.
     IsLEDOn.ledField=0;
     for (i = 0; i < NUMLEDS; i++){               

@@ -8,6 +8,9 @@ int volatile optoOffThreshold;
 unsigned char volatile OptoState;
 unsigned char volatile isOptoOn;
 
+unsigned int nextPeriod;
+unsigned int nextDC;
+
 extern LEDFLAGS IsLEDConstant;
 
 #define PRESCALE               64
@@ -15,53 +18,65 @@ extern LEDFLAGS IsLEDConstant;
 #define T2_TICK               (GetPeripheralClock()/PRESCALE/TOGGLES_PER_SEC)
 
 void ConfigurePWMTimer(void) {
-    OpenTimer2(T2_ON | T2_32BIT_MODE_ON | T2_SOURCE_INT | T2_PS_1_64, T2_TICK);
-    ConfigIntTimer2(T2_INT_ON | T2_INT_PRIOR_3);
+    OpenTimer2(T2_OFF | T2_32BIT_MODE_ON | T2_SOURCE_INT | T2_PS_1_64, T2_TICK);
 }
 
-void ConfigurePWM() {
-
+void ConfigurePWM2(){
+    unsigned int tmp;
+    tmp = T2_TICK>>1;
     ConfigurePWMTimer();
+    OpenOC1(OC_ON | OC_TIMER_MODE32 | OC_TIMER2_SRC | OC_PWM_FAULT_PIN_DISABLE ,tmp,tmp);    
+    T2CONSET = 0x8000;
+}
+
+void ConfigurePWM() {    
+    ConfigurePWMTimer();    
     // Turn off the module before configuring   
     OC1CON = 0x0000;
-    // PWM mode without fault pin.
-    OC1CONbits.OCM0 = 0;
-    OC1CONbits.OCM1 = 1;
-    OC1CONbits.OCM2 = 1;
-
-    OC1CONbits.OCTSEL = 0; // Use timer 2 as the clock source.
-    OC1CONbits.OC32 = 1; //Use 16-bit compare.
-
-    OC1CONbits.SIDL = 0; //Continue when in idle mode.
-
-    OC1CONbits.ON = 0; //Turn off module.
-
+    
+    PR2=156250;
     OC1R = PR2 >> 1;
     OC1RS = PR2 >> 1;
 
-    T2CONSET = 0x8000;
+    nextPeriod = PR2;
+    nextDC=OC1RS;
+    
+    // PWM mode without fault pin.
+    OC1CON = 0x0006;    
+    
+    //OC1CONbits.OCM0 = 0;
+    //OC1CONbits.OCM1 = 1;
+    //OC1CONbits.OCM2 = 1;
 
-    ConfigIntOC1(OC_INT_PRIOR_4 | OC_INT_ON);
+    OC1CONbits.OCTSEL = 0; // Use timer 2 as the clock source.
+    OC1CONbits.OC32 = 1; //Use 32-bit compare.
 
+    OC1CONbits.SIDL = 0; //Continue when in idle mode.
+    
+    // An OC interrupt is not generated in PWM mode.
+    // To use it this way I think I would have to configure
+    // Dual pulse continuous mode.
     OC1CONbits.ON = 1; // Turn PWM on.
+    T2CONSET = 0x8000;
+   
 }
 
 // Based on the given prescaler the max frequency is
 // 2kHz with duty cycle >= 1%.
 
 void SetOptoParameters(unsigned int freq, unsigned int dc) {
-    float tmp, tmp2;
-
+    float tmp, tmp2;    
     if (freq > 2000) freq = 2000;
     if (dc > 100) dc = 100;
 
-    tmp = (float) (GetPeripheralClock() / PRESCALE / (float) freq);
-
+    tmp = (float) (GetPeripheralClock() / PRESCALE / (float) freq);  
     tmp2 = tmp * ((float) dc / 100.0);
 
     dutyCycle = dc;
     hertz = freq;
-
+    
+    // Need to reset timer here so we don't miss the new period and run forever.
+    TMR2=TMR3=0;
     PR2 = (unsigned int) tmp;
     OC1RS = (unsigned int) tmp2;
 }
@@ -109,9 +124,7 @@ void ConfigureOpto(void) {
 
     ConfigurePWM();
     InitializeLEDControl(0, 0, 0);
-    SetOptoParameters(40, 8);
-
-
+    SetOptoParameters(40, 50);
 }
 
 void GetOptoStatus(unsigned char* status) {
@@ -122,25 +135,10 @@ void GetOptoStatus(unsigned char* status) {
     status[7] = dutyCycle & 0xFF;
 }
 
-void inline ProcessOptoStep() {
-    // TODO: Try to eliminate this by activating the interrupts.
+void inline ProcessOptoStep() {  
     if (PWM_PORT == 1)
         Opto_On();
     else
         Opto_Off();
 }
 
-// This interrupt is not currently active
-
-void __ISR(_TIMER_2_VECTOR, IPL3SOFT) Timer2Handler(void) {
-    //PORTEINV = 0x0002;   
-    Opto_On();
-    mT2ClearIntFlag();
-}
-// This interrupt is not currently active
-
-void __ISR(_OUTPUT_COMPARE_1_VECTOR, IPL4SOFT) OC1Handler(void) {
-    //PORTEINV = 0x0001;
-    Opto_Off();
-    mOC1ClearIntFlag();
-}

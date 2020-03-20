@@ -17,6 +17,6 @@ void InitializeBoard(){
     USERBUTTON2_TRIS=1;    
     TRIGGER_TRIS = 1;
     SUPRESSOR_TRIS=1;      
-    INDICATOR_TRIS=1;     
+    INDICATOR_TRIS=0;     
 }
 

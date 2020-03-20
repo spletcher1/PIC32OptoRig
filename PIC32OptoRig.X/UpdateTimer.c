@@ -28,7 +28,7 @@ void __ISR(_TIMER_1_VECTOR, IPL2SOFT) Timer1Handler(void) {
     if (hbCounter >= 1000) {       
         FLIP_HEARTBEAT_LED();  
         if (theProgram.programStatus == RUNNING || theProgram.programStatus == STAGED)
-            FLIP_SIGNALLED_LED();                
+            SIGNALLED_LAT = HEARTBEAT_PORT;                
         if (secondCounter == 1) {
             secondCounter = 0;
             updateTrigger1sec = 1;

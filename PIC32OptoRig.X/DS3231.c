@@ -3,35 +3,26 @@
 
 #include <time.h>
 
-#define JULIAN_DAY_1970 2440588 // julian day calculation for jan 1 1970
-#define TIME_SEC_IN_MIN             60                     // seconds per minute
-#define TIME_SEC_IN_HOUR            (TIME_SEC_IN_MIN * 60) // seconds per hour
-#define TIME_SEC_IN_24_HOURS        (TIME_SEC_IN_HOUR * 24)// seconds per day
-
-
 rtc_time_t local_time;
 rtc_time_t setTime;
 
 unsigned char isRTCInitialized;
-unsigned char isTimeCallAnswered;
 errorFlags_t ErrorsRegister;
 
 // Must be called after I2C1Init
 
 void InitRTC() {
     I2C_RESULT tmp;
-    // a 2 here indicates we are running the first check.
-    isTimeCallAnswered = 2;
     //SetRTC();
     //DelayMs(1000);
-    tmp=ReadTimeFromRTC(&local_time);
-    //DelayMs(1000);
+    tmp=ReadTimeFromRTC(&local_time);    
    
     // If isRTCPresent is 0 it indicated a I2C timeout so its not there.
     // This change is probably not needed, but it is included here for clarity.
-    if (isTimeCallAnswered == 2)
+    if (tmp==I2C_SUCCESS)
         isRTCInitialized = 1;
     else {
+        ErrorsRegister.bits.RTCError = 1;
         isRTCInitialized = 0;
         local_time.seconds = 0;
         local_time.minutes = 0;
@@ -46,12 +37,12 @@ void InitRTC() {
     setTime.weekday = 0;
     setTime.monthday = 1;
     setTime.month = 1;
-    setTime.year = 1;
+    setTime.year = 1;   
 }
 
 void SetRTCFromUART(unsigned char* buffer, unsigned int len) {
     if (len != 8) {
-        ErrorsRegister.bits.RTCTimeFormatError = 1;
+        ErrorsRegister.bits.RTCError = 1;
         return;
     }
     setTime.seconds = buffer[7];
@@ -62,27 +53,27 @@ void SetRTCFromUART(unsigned char* buffer, unsigned int len) {
     setTime.year = buffer[2];
 
     if (setTime.year > 30) {
-        ErrorsRegister.bits.RTCTimeFormatError = 1;
+        ErrorsRegister.bits.RTCError = 1;
         return;
     }
     if (setTime.month > 12 || setTime.month < 1) {
-        ErrorsRegister.bits.RTCTimeFormatError = 1;
+        ErrorsRegister.bits.RTCError = 1;
         return;
     }
     if (setTime.monthday > 31 || setTime.monthday < 1) {
-        ErrorsRegister.bits.RTCTimeFormatError = 1;
+        ErrorsRegister.bits.RTCError = 1;
         return;
     }
     if (setTime.hours > 24 || setTime.monthday < 0) {
-        ErrorsRegister.bits.RTCTimeFormatError = 1;
+        ErrorsRegister.bits.RTCError = 1;
         return;
     }
     if (setTime.minutes > 60 || setTime.minutes < 0) {
-        ErrorsRegister.bits.RTCTimeFormatError = 1;
+        ErrorsRegister.bits.RTCError = 1;
         return;
     }
     if (setTime.seconds > 60 || setTime.seconds < 0) {
-        ErrorsRegister.bits.RTCTimeFormatError = 1;
+        ErrorsRegister.bits.RTCError = 1;
         return;
     }
    
@@ -106,6 +97,9 @@ void SetRTC() {
     setTime.year = 1;
 }
 
+// Currently not used as the time is only
+// checked against RTC every so often during 
+// the program run.
 void StepRTC() {
     if (isRTCInitialized) {
         ReadTimeFromRTC(&local_time);
@@ -131,11 +125,12 @@ long int GetSecondsFromMidnight() {
 }
 
 void SendTimeInformation() {
-    isTimeCallAnswered = 2;
-    ReadTimeFromRTC(&local_time);
+    I2C_RESULT tmp;
+    tmp=ReadTimeFromRTC(&local_time);
     // If isRTCPresent is 0 it indicated a I2C timeout so its not there.
     // This change is probably not needed, but it is included here for clarity.
-    if (isTimeCallAnswered == 0) {
+    if (tmp != I2C_SUCCESS) {
+        ErrorsRegister.bits.RTCError = 1;
         local_time.seconds = 0;
         local_time.minutes = 0;
         local_time.hours = 0;
@@ -152,20 +147,17 @@ void SendTimeInformation() {
 }
 
 long time_date_to_epoch(rtc_time_t *ts) {
-    struct tm tmVar;
-    time_t timeVar;
+    struct tm tmVar ={0};    
     long epoch;
 
     tmVar.tm_sec = ts->seconds;
     tmVar.tm_min = ts->minutes;
     tmVar.tm_hour = ts->hours;
     tmVar.tm_mday = ts->monthday;
-    tmVar.tm_mon = ts->month;
-    tmVar.tm_year = ts->year + 2000 - 1900;
-    //
-    // What is the epoch of the date in ts ?
-    //
-    //epoch = (long)Time_dateToEpoch(&ts2) ;       //  1148404020
+    tmVar.tm_mon = ts->month-1;
+    tmVar.tm_year = ts->year + 2000 - 1900;   
+  
+    
     epoch = mktime(&tmVar);
     return epoch;
 }

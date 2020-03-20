@@ -11,7 +11,6 @@ unsigned char barray[BUFFERSIZES];
 
 extern rtc_time_t local_time;
 extern unsigned char isRTCInitialized;
-extern unsigned char isTimeCallAnswered;
 extern errorFlags_t ErrorsRegister;
 int validationCounter;
 unsigned int milliSecondCounter;
@@ -71,8 +70,8 @@ void AddProgramStep(unsigned char led1val, unsigned char led2val, unsigned char 
 void ConfigureSimpleProgram(unsigned long int secondsOn, unsigned long int secondsOff){
   ClearProgram();
   theProgram.programType = LOOPING;
-  AddProgramStep(1,1,1,1,40,32,0,secondsOn);
-  AddProgramStep(0,0,0,0,40,32,0,secondsOff);
+  AddProgramStep(1,1,1,1,10,50,0,secondsOn);
+  AddProgramStep(0,0,0,0,10,50,0,secondsOff);
   theProgram.startTime.seconds = 0;
   theProgram.startTime.minutes = 0;
   theProgram.startTime.hours =  0;
@@ -92,10 +91,10 @@ void LoadProgram(){
 }
 
 void ValidateProgramTime() {
+  I2C_RESULT tmp;
   if (isRTCInitialized == 0) return;
-  isTimeCallAnswered=2;
-  ReadTimeFromRTC(&local_time);
-  if(isTimeCallAnswered==0)
+  tmp=ReadTimeFromRTC(&local_time);
+  if(tmp!=I2C_SUCCESS)
     return;
   theProgram.ElapsedSecondsFromStart = time_date_to_epoch(&local_time) - theProgram.startEpochTime;
   if(theProgram.programType==LINEAR) {
@@ -115,6 +114,7 @@ void TurnLEDOff(){
   unsigned int thresh[NUMLEDS];
   thresh[0]=thresh[1]=thresh[2]=thresh[3]=0;
   SetLEDThresholds(thresh);
+  SIGNALLED_OFF();  
 }
 
 void StopProgram(){
@@ -176,7 +176,7 @@ void StageProgram(){
     theProgram.startTime.weekday = local_time.weekday;
     theProgram.startTime.monthday = local_time.monthday;
     theProgram.startTime.month = local_time.month;
-    theProgram.startTime.year = local_time.year;
+    theProgram.startTime.year = local_time.year;    
   }
 
   if(theProgram.programType == CIRCADIAN){
@@ -325,6 +325,7 @@ void SendProgramData(){
 }
 
 void SendProgramStatus(){
+  I2C_RESULT tmp;
   barray[0]=0xFE; //Address packet to UART Master
   switch(theProgram.programStatus){
     case NOTLOADED:
@@ -350,12 +351,11 @@ void SendProgramStatus(){
   case CIRCADIAN:
       barray[2]=0x03;
       break;
-  }
-  isTimeCallAnswered=2;
-  ReadTimeFromRTC(&local_time);
+  }  
+  tmp=ReadTimeFromRTC(&local_time);
   // If isRTCPresent is 0 it indicated a I2C timeout so its not there.
   // This change is probably not needed, but it is included here for clarity.
-  if(isTimeCallAnswered==0) {
+  if(tmp!=I2C_SUCCESS) {
     local_time.seconds = 0;
     local_time.minutes =0;
     local_time.hours = 0;

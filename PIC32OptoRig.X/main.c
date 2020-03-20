@@ -22,7 +22,8 @@ int CurrentValues[NUMLEDS];
 
 void InitApp(void) {        
     Startup();
-    InitializeBoard();   
+    InitializeBoard(); 
+     
     ConfigureUpdateTimer();        
     ConfigureUART1();              
     ConfigureButtons();
@@ -33,7 +34,7 @@ void InitApp(void) {
 
     DelayMs(500);
 
-    //ConfigureOpto();
+    ConfigureOpto();
        
     ErrorsRegister.byte = 0;
 
@@ -58,14 +59,15 @@ void InitApp(void) {
 void main(void) {
     InitApp();
     HB_OFF();             
-    //StageProgram();   
+    StageProgram();     
     while (1) {
         if (updateTrigger500us) {
-            //StepLEDControl();
+            StepLEDControl();
+            ProcessOptoStep();
             updateTrigger500us = 0;
         }
         if (updateTrigger1ms) {
-            //ProcessButtonStep();
+            ProcessButtonStep();
             ProcessProgramStep();
             updateTrigger1ms = 0;
         }

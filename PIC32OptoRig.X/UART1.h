@@ -31,7 +31,7 @@ typedef union {
         unsigned CommandNotFoundError : 1;
         unsigned TooManyStepsError : 1;
         unsigned I2CError : 1;
-        unsigned RTCTimeFormatError : 1;
+        unsigned RTCError : 1;
         unsigned DeveloperBit2 : 1;
     } bits;
 } errorFlags_t;
