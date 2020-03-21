@@ -46,14 +46,12 @@ void ProcessButtonStep() {
 
 }
 
-void ProcessButton1Press() {
-  if(theProgram.programStatus == RUNNING)
-    StopProgram();
-  else
-    StageProgram();
-   signalButton1Pressed=0;        
+void ProcessButton1Press() {  
+  StopProgram();
+  signalButton1Pressed=0;        
 }
 
 void ProcessButton2Press() {
+    StageProgram();
     signalButton2Pressed=0;        
 }

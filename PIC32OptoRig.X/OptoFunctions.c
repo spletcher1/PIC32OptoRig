@@ -93,7 +93,7 @@ void SetHertz(unsigned int hz) {
 // Also the indicator only cares about LED1 and LED2 (the red ones))
 void inline Opto_On() {
     isOptoOn = 1;
-    if(SUPRESSOR_PORT)
+    if(SUPRESSOR_PORT==1)
         LATESET = OptoState & 0x0C;    
     else 
         LATESET = OptoState & 0x0F;
@@ -106,7 +106,7 @@ void inline Opto_Off() {
 
     LATECLR = 0x0F;
     INDICATOR_LAT = 0;
-    if(SUPRESSOR_PORT)
+    if(SUPRESSOR_PORT==1)
         LATESET = OptoState & (IsLEDConstant.ledField & 0x0C);        
     else 
         LATESET = OptoState & (IsLEDConstant.ledField & 0x0F);
