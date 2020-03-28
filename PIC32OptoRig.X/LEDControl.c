@@ -24,6 +24,7 @@ unsigned int currentDelay;
 unsigned int currentDecay;
 unsigned int currentMaxTimeOn;
 
+struct FullProgram theProgram;
 
 void inline SetLEDOn(unsigned char led){    
     // Set current and linked LEDs here.  
@@ -103,13 +104,18 @@ void SetLEDThresholds(int *thresh){
 
 void StepLEDControl() {
     unsigned char i; 
+    unsigned char os;
     // We now start by assuming everyone is off.
     IsLEDOn.ledField=0;
     for (i = 0; i < NUMLEDS; i++){               
         // LED Update only sets those as on.
         LEDUpdateFunction(i);        
     }
-    SetOptoState(IsLEDOn.ledField & 0x0F);    
+    os = IsLEDOn.ledField & 0x0F;
+    if(TRIGGER_PORT==1 && (theProgram.programStatus == RUNNING))
+        os = os | theProgram.Steps[theProgram.CurrentStep].ActiveTriggers;
+   
+    SetOptoState(os);    
 }
 
 
