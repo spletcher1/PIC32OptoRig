@@ -112,8 +112,13 @@ void StepLEDControl() {
         LEDUpdateFunction(i);        
     }
     os = IsLEDOn.ledField & 0x0F;
-    if(TRIGGER_PORT==1 && (theProgram.programStatus == RUNNING))
-        os = os | theProgram.Steps[theProgram.CurrentStep].ActiveTriggers;
+    if(TRIGGER_PORT==1 && (theProgram.programStatus == RUNNING)){
+        os = os | (theProgram.Steps[theProgram.CurrentStep].ActiveTriggers & 0x0C);        
+    }
+    
+    // In the latest version of Freds mods the SUPPRESSOR_PORT is really 
+    if(IR_TRIGGER_PORT==1 && (theProgram.programStatus == RUNNING))
+        os = os | (theProgram.Steps[theProgram.CurrentStep].ActiveTriggers & 0x03);
    
     SetOptoState(os);    
 }

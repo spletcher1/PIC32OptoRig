@@ -46,12 +46,13 @@ void ProcessButtonStep() {
 
 }
 
-void ProcessButton1Press() {  
-  StopProgram();
+void ProcessButton1Press() {    
+  ClearProgram();
   signalButton1Pressed=0;        
 }
 
-void ProcessButton2Press() {
+void ProcessButton2Press() {    
+    LoadProgram();        
     StageProgram();
     signalButton2Pressed=0;        
 }

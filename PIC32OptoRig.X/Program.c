@@ -153,7 +153,7 @@ void StartProgram() {
 }
 
 void CheckProgramForStart(){
-  if(theProgram.programStatus != STAGED) return;
+  if(theProgram.programStatus != STAGED) return;  
   if(time_date_to_epoch(&local_time) >= theProgram.startEpochTime) {
     StartProgram();
    }
@@ -234,6 +234,18 @@ void ProcessProgramStep(){
   if(theProgram.programStatus == STAGED){
     CheckProgramForStart();
   }
+  
+  // This is here to check whether a combined signal on both trigger pins, signals a staged program.
+  if(theProgram.programStatus==NOTLOADED){
+      if (TRIGGER_PORT==1 && IR_TRIGGER_PORT==1){                    
+          LoadProgram();
+          INDICATOR_LAT = 1;
+          StageProgram();   
+          INDICATOR_LAT = 0;          
+      }
+                
+  }
+  
   if(theProgram.programStatus != RUNNING)
     return;
 
