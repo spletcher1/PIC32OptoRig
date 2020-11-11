@@ -15,7 +15,7 @@
 
 #define controllerID 0x01
 #define CURRENTVERSION "3.0.0"
-#define MAXPROGRAMSTEPS 1000
+#define MAXPROGRAMSTEPS 1500
 
 #define NUMLEDS  4
 
