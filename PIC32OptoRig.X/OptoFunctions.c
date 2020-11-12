@@ -112,9 +112,9 @@ void ConfigureOpto(void) {
     LEDSTRING2_TRIS = 0;
     LEDSTRING3_TRIS = 0;
     LEDSTRING4_TRIS = 0;
-    //Default is LED strings 1 and 2 are pulsed.
-    // Strings 3 and 4 are not.
-    IsLEDConstant.ledField = 0x0C;
+    //Default is LED strings RE3 and RE2 are pulsed
+    // Strings RE0 and RE1 are not.
+    IsLEDConstant.ledField = 0x03;
     OptoState = 0x00;
     Opto_Off();
 
