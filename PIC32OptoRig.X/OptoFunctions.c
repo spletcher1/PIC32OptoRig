@@ -91,6 +91,31 @@ void SetHertz(unsigned int hz) {
 // Will assume the IR is controlled independently of Suppressor.
 
 // Also the indicator only cares about LED1 and LED2 (the red ones))
+/*
+void inline Opto_On() {
+    unsigned int tmp;
+    isOptoOn = 1;
+    // My goal in having these extra lines of code is to avoid turning off
+    // leds that should not be turned off, even for one instruction.
+    //tmp = PORTE & 0xF0;
+    //tmp = tmp | (OptoState & 0x0F);    
+    LATESET = OptoState & 0x0F;
+    if (PORTE & 0x0C)
+        INDICATOR_LAT = 1;
+}
+*/
+void inline Opto_Off() {    
+    unsigned int tmp;
+    isOptoOn = 0;
+    LATECLR = 0x0F;    
+    tmp = OptoState & (IsLEDConstant.ledField & 0x0F);    
+    LATESET = tmp;
+    if (tmp & 0x0C)
+        INDICATOR_LAT = 1;
+    else
+        INDICATOR_LAT = 0;
+}
+
 void inline Opto_On() {
     unsigned int tmp;
     isOptoOn = 1;
@@ -99,19 +124,10 @@ void inline Opto_On() {
     tmp = PORTE & 0xF0;
     tmp = tmp | (OptoState & 0x0F);    
     LATE = tmp;
-    if (PORTE & 0x0C)
+    if (tmp & 0x0C)
         INDICATOR_LAT = 1;
-}
-
-void inline Opto_Off() {
-    isOptoOn = 0;
-    //LATECLR = 0x0F;
-    INDICATOR_LAT = 0;
-    // Here we clear only those bits that aren't constant.
-    LATECLR = !(IsLEDConstant.ledField & 0x0F);
-    //LATESET = OptoState & ;
-    if (PORTE & 0x0C)
-        INDICATOR_LAT = 1;
+    else
+        INDICATOR_LAT = 0;
 }
 
 void ConfigureOpto(void) {
@@ -124,9 +140,6 @@ void ConfigureOpto(void) {
 
     ConfigurePWM();
     InitializeLEDControl (0, 0, 0);
-    //Default is LED strings RE3 and RE2 are pulsed
-    // Strings RE0 and RE1 are not.
-    //IsLEDConstant.ledField = 0x03;
     
     SetOptoParameters(40, 50);
 }

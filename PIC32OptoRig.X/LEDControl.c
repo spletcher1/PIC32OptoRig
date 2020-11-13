@@ -38,6 +38,7 @@ void ClearLEDLinkFlags(){
     }    
 }
 
+//********************************************
 void UpdateLEDSimplest(unsigned char led) {
     if (LEDThresholdValues[led] == -1) { 
         return;
@@ -111,11 +112,12 @@ void StepLEDControl() {
         // LED Update only sets those as on.
         LEDUpdateFunction(i);        
     }
+    
     os = IsLEDOn.ledField & 0x0F;
-    if(theProgram.Steps[theProgram.CurrentStep].ActiveTriggers != 0 && IR_TRIGGER_PORT==0){
-        os =os & (!theProgram.Steps[theProgram.CurrentStep].ActiveTriggers);
-    }
-    /*
+    //if(theProgram.Steps[theProgram.CurrentStep].ActiveTriggers != 0 && IR_TRIGGER_PORT==0){
+    //    os =os & (!theProgram.Steps[theProgram.CurrentStep].ActiveTriggers);
+   // }
+    
     if(theProgram.Steps[theProgram.CurrentStep].ActiveTriggers & 0x01) {
         if(IR_TRIGGER_PORT==0){
             os = os & 0x0E;
@@ -136,7 +138,8 @@ void StepLEDControl() {
             os = os & 0x07;
         }        
     }
-    */
+   
+    
     SetOptoState(os);    
 }
 
