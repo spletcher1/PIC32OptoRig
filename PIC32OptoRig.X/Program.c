@@ -238,9 +238,10 @@ void ProcessProgramStep(){
   // This is here to check whether a combined signal on both trigger pins, signals a staged program.
   if(theProgram.programStatus==NOTLOADED){
       if (TRIGGER_PORT==1 && IR_TRIGGER_PORT==1){                    
-          LoadProgram();
           INDICATOR_LAT = 1;
+          LoadProgram();                  
           StageProgram();   
+          DelayMs(200);
           INDICATOR_LAT = 0;          
       }
                 
