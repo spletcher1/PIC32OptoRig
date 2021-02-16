@@ -160,6 +160,7 @@ void CheckProgramForStart(){
 }
 
 void StageProgram(){
+ I2C_RESULT tmp;
  if(theProgram.NumSteps==0) return;
 
   if(isRTCInitialized==0 && theProgram.programType == CIRCADIAN)
@@ -170,6 +171,16 @@ void StageProgram(){
     theProgram.programType=LOOPING;
 
   if(IsStartTimeZero()) {
+    tmp=ReadTimeFromRTC(&local_time);
+    if (tmp != I2C_SUCCESS) {
+        ErrorsRegister.bits.RTCError = 1;
+        local_time.seconds = 0;
+        local_time.minutes = 0;
+        local_time.hours = 0;
+        local_time.monthday = 1;
+        local_time.month = 1;
+        local_time.year = 1;
+    }
     theProgram.startTime.seconds = local_time.seconds;
     theProgram.startTime.minutes = local_time.minutes;
     theProgram.startTime.hours =  local_time.hours;

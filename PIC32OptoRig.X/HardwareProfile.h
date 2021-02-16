@@ -13,7 +13,7 @@
 #define __HARDWARE_PROFILE_H
 #include <p32xxxx.h>
 
-#define controllerID 0x01
+#define controllerID 29
 #define CURRENTVERSION "3.0.0"
 #define MAXPROGRAMSTEPS 1500
 
