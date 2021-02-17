@@ -34,6 +34,13 @@ typedef enum
 
 
 
+struct ProgramBlock{
+    unsigned int blockReps;
+    unsigned int currentRep;
+    struct ProgramStep Steps[MAXPROGRAMSTEPS];
+};
+
+
 struct ProgramStep {
   unsigned int StepNumber;
   unsigned char LED1Threshold;
@@ -57,8 +64,7 @@ struct FullProgram{
   unsigned long uninterruptedLoops;
   program_status programStatus;
   unsigned int NumSteps;
-  unsigned int CurrentStep;
-  struct ProgramStep Steps[MAXPROGRAMSTEPS];
+  unsigned int CurrentBlock; 
 };
 
 
